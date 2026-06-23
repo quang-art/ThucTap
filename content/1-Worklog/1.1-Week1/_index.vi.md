@@ -12,23 +12,23 @@ pre: " <b> 1.1. </b> "
 
 ### Mục tiêu tuần 1:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Tìm hiểu các dịch vụ AWS cơ bản và cách cấu hình tài khoản.
+* Nắm vững quản lý quyền truy cập, chi phí và hạ tầng mạng AWS.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+- [Tạo mới **Tài khoản AWS**](https://000001.awsstudygroup.com/vi/)
+- [Quản lý mức chi phí sử dụng trên AWS với **AWS Budgets**](https://000007.awsstudygroup.com/vi/)
+- [Yêu cầu hỗ trợ với **AWS Support**](https://000009.awsstudygroup.com/vi/)
+- [Quản trị quyền truy cập với *AWS Identity and Access Management* (**AWS IAM**)](https://000002.awsstudygroup.com/vi/)
+- [Triển khai hạ tầng mạng với *Amazon Virtual Private Cloud* (**Amazon VPC**)](https://000003.awsstudygroup.com/vi/)
+
+**Giai đoạn thực hiện:** 20/4 - 26/4
 
 ### Kết quả đạt được tuần 1:
 
-Kết nối và làm quen với các thành viên của First Cloud Journey.
-Nắm vững các dịch vụ AWS cơ bản, cách sử dụng giao diện dòng lệnh (console) và CLI.
+Tạo được tài khoản AWS, hiểu rõ các công cụ quản lý chi phí và hỗ trợ.
+Nắm vững quản trị quyền truy cập qua IAM và thiết lập hạ tầng mạng cơ bản với VPC.
 
 
 
