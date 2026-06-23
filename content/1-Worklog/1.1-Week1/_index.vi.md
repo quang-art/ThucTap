@@ -1,14 +1,10 @@
 ---
 title: "Worklog Tuần 1"
-date: 2024-01-01
+date: 2024-04-20
 weight: 1
 chapter: false
 pre: " <b> 1.1. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 1:
 
@@ -17,18 +13,23 @@ pre: " <b> 1.1. </b> "
 
 ### Các công việc cần triển khai trong tuần này:
 
-- [Tạo mới **Tài khoản AWS**](https://000001.awsstudygroup.com/vi/)
-- [Quản lý mức chi phí sử dụng trên AWS với **AWS Budgets**](https://000007.awsstudygroup.com/vi/)
-- [Yêu cầu hỗ trợ với **AWS Support**](https://000009.awsstudygroup.com/vi/)
-- [Quản trị quyền truy cập với *AWS Identity and Access Management* (**AWS IAM**)](https://000002.awsstudygroup.com/vi/)
-- [Triển khai hạ tầng mạng với *Amazon Virtual Private Cloud* (**Amazon VPC**)](https://000003.awsstudygroup.com/vi/)
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+|---|---|---|---|---|
+| 2 | Tạo mới tài khoản AWS Free Tier và kiểm tra quyền truy cập | 20/04/2026 | 20/04/2026 | AWS Free Tier, tài liệu nội bộ |
+| 3 | Tìm hiểu dịch vụ AWS cơ bản: Compute, Storage, Networking, Database và chi phí | 21/04/2026 | 21/04/2026 | AWS documentation, Cloud journey |
+| 4 | Thực hành trên AWS Console và cài đặt, cấu hình AWS CLI | 22/04/2026 | 22/04/2026 | AWS Console, AWS CLI docs |
+| 5 | Quản lý quyền truy cập với AWS IAM: tạo user, group, policy và kiểm soát quyền | 23/04/2026 | 23/04/2026 | AWS IAM documentation |
+| 6 | Thiết lập hạ tầng mạng cơ bản với Amazon VPC và kiểm tra kết nối | 24/04/2026 | 24/04/2026 | AWS VPC documentation |
 
-**Giai đoạn thực hiện:** 20/4 - 26/4
+**Giai đoạn thực hiện:** 20/04/2026 - 26/04/2026
 
 ### Kết quả đạt được tuần 1:
 
-Tạo được tài khoản AWS, hiểu rõ các công cụ quản lý chi phí và hỗ trợ.
-Nắm vững quản trị quyền truy cập qua IAM và thiết lập hạ tầng mạng cơ bản với VPC.
+- Đã tạo và cấu hình xong tài khoản AWS Free Tier.
+- Nắm được các nhóm dịch vụ AWS cơ bản và vai trò của từng loại dịch vụ.
+- Hoàn thành cài đặt AWS CLI và thực hiện các lệnh kiểm tra ban đầu.
+- Cấu hình IAM cơ bản để quản lý người dùng, nhóm và quyền truy cập.
+- Thiết lập VPC, subnet và kiểm tra kết nối mạng ban đầu.
 
 
 
