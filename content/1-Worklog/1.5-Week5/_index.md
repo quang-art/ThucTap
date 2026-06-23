@@ -1,57 +1,66 @@
 ---
 title: "Week 5 Worklog"
-date: 2024-01-01
-weight: 1
+date: 2026-05-18
+weight: 5
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
-### Week 5 Objectives:
+### Week 5 Objectives - Operations:
 
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Create automation workflows for management and learn AWS Lambda.
+* Master resource management, monitoring, and automation techniques.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference |
+|---|---|---|---|---|
+| 2 | Auto start/stop servers with AWS Lambda and send Slack notifications | 18/05/2026 | 18/05/2026 | https://000022.awsstudygroup.com/vi/ |
+| 3 | Create system monitoring dashboard with CloudWatch and Grafana | 19/05/2026 | 19/05/2026 | https://000029.awsstudygroup.com/vi/ |
+| 4 | Manage resources by groups using Tags and Resource Groups | 20/05/2026 | 20/05/2026 | https://000027.awsstudygroup.com/vi/ |
+| 5 | Manage EC2 access using Tags through IAM | 21/05/2026 | 22/05/2026 | https://000028.awsstudygroup.com/vi/ |
+| 6 | Manage services and automate tasks using AWS Systems Manager | 23/05/2026 | 23/05/2026 | https://000031.awsstudygroup.com/vi/ |
+| 7 | Work with AWS Systems Manager - Session Manager | 24/05/2026 | 24/05/2026 | https://000058.awsstudygroup.com/vi/ |
+| 8 | Initialize Infrastructure as Code with AWS CloudFormation | 24/05/2026 | 24/05/2026 | https://000037.awsstudygroup.com/vi/ |
+
+**Implementation period:** 18/05/2026 - 24/05/2026
 
 ### Week 5 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+**About AWS Lambda and Automation:**
+- Deploy Lambda functions to automatically start/stop EC2 instances on schedule.
+- Integrate Lambda with SNS to send Slack notifications for events.
+- Understand IAM roles and permissions for Lambda functions.
+- Handle event triggers from CloudWatch Events, SNS, API Gateway.
 
-* Successfully created and configured an AWS Free Tier account.
+**About CloudWatch and Grafana:**
+- Configure CloudWatch metrics and dashboards for monitoring EC2 instances.
+- Create CloudWatch alarms for anomaly detection and notifications.
+- Integrate Grafana with CloudWatch for data visualization.
+- Analyze logs using CloudWatch Logs Insights.
 
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
+**About Resource Tagging:**
+- Create tagging policies (project, environment, owner, cost-center).
+- Use Resource Groups to organize and manage resources by tags.
+- Apply resource-based IAM policies for EC2 based on tags.
 
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
+**About IAM Tag-based Access Control:**
+- Grant EC2 access based on principal tags and resource tags.
+- Create IAM policies with condition keys like aws:PrincipalTag and aws:ResourceTag.
+- Manage team access to EC2 instances by environment (dev, staging, prod).
 
-* Used AWS CLI to perform basic operations such as:
+**About AWS Systems Manager:**
+- Use Parameter Store for application configuration storage.
+- Create and execute automation documents for operational tasks.
+- Use Maintenance Windows for scheduling system maintenance.
 
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
+**About Session Manager:**
+- Configure Session Manager for remote EC2 access without SSH keys.
+- Monitor and audit session activities for compliance.
 
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+**About AWS CloudFormation:**
+- Write Infrastructure as Code (IaC) templates in JSON/YAML.
+- Create stacks for automatic AWS resource deployment.
+- Manage stack updates and deletion without affecting production.
+- Use nested stacks for template reuse.

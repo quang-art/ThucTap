@@ -1,58 +1,60 @@
 ---
 title: "Worklog Tuần 6"
-date: 2024-01-01
-weight: 1
+date: 2026-05-25
+weight: 6
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
+### Mục tiêu tuần 6 - Bảo mật (Security):
 
-### Mục tiêu tuần 6:
-
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Tăng cường bảo mật hạ tầng và ứng dụng.
+* Quản lý truy cập và mã hóa dữ liệu.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+|---|---|---|---|---|
+| 2 | Thiết lập Single Sign-On cho Organization với Amazon SSO | 25/05/2026 | 25/05/2026 | https://000012.awsstudygroup.com/vi/ |
+| 3 | Giới hạn quyền của User với IAM Permission Boundary | 26/05/2026 | 26/05/2026 | https://000030.awsstudygroup.com/vi/ |
+| 4 | Giới hạn chuyển Role theo Condition | 27/05/2026 | 27/05/2026 | https://000044.awsstudygroup.com/vi/ |
+| 5 | Kiểm tra đánh giá tiêu chuẩn bảo mật với AWS Security Hub | 28/05/2026 | 29/05/2026 | https://000018.awsstudygroup.com/vi/ |
+| 6 | Bảo mật Ứng dụng và API với AWS WAF | 29/05/2026 | 29/05/2026 | https://000026.awsstudygroup.com/vi/ |
+| 7 | Quản lý khóa với AWS KMS | 30/05/2026 | 31/05/2026 | https://000033.awsstudygroup.com/vi/ |
+
+**Giai đoạn thực hiện:** 25/05/2026 - 31/05/2026
 
 ### Kết quả đạt được tuần 6:
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
 
-* Đã tạo và cấu hình AWS Free Tier account thành công.
+**Về Amazon SSO:**
+- Thiết lập AWS Single Sign-On cho môi trường multi-account.
+- Tích hợp với Active Directory hoặc Okta để xác thực users.
+- Quản lý quyền truy cập các AWS accounts thông qua SSO portal.
 
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
+**Về IAM Permission Boundaries:**
+- Tạo permission boundaries để giới hạn max permissions cho IAM users/roles.
+- Phối hợp permission boundaries với role-based policies.
+- Tránh privilege escalation bằng cách sử dụng permission boundaries.
 
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
+**Về Conditional Role Assumption:**
+- Thiết lập AssumeRole policies với conditions (IP address, MFA, time-based).
+- Giới hạn role assumption dựa trên source IP và MFA requirement.
+- Tăng bảo mật cho cross-account role access.
 
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
+**Về AWS Security Hub:**
+- Kết nối Security Hub với các AWS accounts và regions.
+- Kiểm tra findings dựa trên AWS Config, GuardDuty, Macie, AWS IAM Access Analyzer.
+- Tạo custom insights để phân tích security posture.
 
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
+**Về AWS WAF:**
+- Cấu hình WAF rules để bảo vệ khỏi SQL injection, XSS, DDoS attacks.
+- Áp dụng WAF về CloudFront, ALB, API Gateway.
+- Giám sát WAF logs và điều chỉnh rules dựa trên traffic patterns.
 
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
+**Về AWS KMS:**
+- Tạo và quản lý Customer Master Keys (CMK) cho mã hóa.
+- Mã hóa EBS volumes, S3 objects, RDS databases sử dụng KMS keys.
+- Quản lý key rotation và auditing key usage.
+- Hiểu về key policies và cross-account key access.
 
 

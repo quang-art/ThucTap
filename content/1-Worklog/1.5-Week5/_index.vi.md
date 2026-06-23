@@ -1,59 +1,68 @@
 ---
 title: "Worklog Tuần 5"
-date: 2024-01-01
-weight: 1
+date: 2026-05-18
+weight: 5
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
 
-### Mục tiêu tuần 5:
+### Mục tiêu tuần 5 - Vận hành (Operations):
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Tạo các automation workflow cho việc quản lý và làm quen với AWS Lambda.
+* Nắm vững cách quản lý tài nguyên, monitoring và automation.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+|---|---|---|---|---|
+| 2 | Bật tắt máy chủ tự động với AWS Lambda và gửi thông báo Slack | 18/05/2026 | 18/05/2026 | https://000022.awsstudygroup.com/vi/ |
+| 3 | Tạo bảng theo dõi hệ thống với CloudWatch và Grafana | 19/05/2026 | 19/05/2026 | https://000029.awsstudygroup.com/vi/ |
+| 4 | Quản lý tài nguyên theo nhóm bằng Tag và Resource Groups | 20/05/2026 | 20/05/2026 | https://000027.awsstudygroup.com/vi/ |
+| 5 | Quản lý truy cập EC2 bằng Tag thông qua IAM | 21/05/2026 | 22/05/2026 | https://000028.awsstudygroup.com/vi/ |
+| 6 | Quản lý dịch vụ và tự động hóa tác vụ với AWS Systems Manager | 23/05/2026 | 23/05/2026 | https://000031.awsstudygroup.com/vi/ |
+| 7 | Sử dụng AWS Systems Manager - Session Manager | 24/05/2026 | 24/05/2026 | https://000058.awsstudygroup.com/vi/ |
+| 8 | Khởi tạo Hạ tầng dưới dạng Code với AWS CloudFormation | 24/05/2026 | 24/05/2026 | https://000037.awsstudygroup.com/vi/ |
+
+**Giai đoạn thực hiện:** 18/05/2026 - 24/05/2026
 
 ### Kết quả đạt được tuần 5:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+**Về AWS Lambda và Automation:**
+- Tạo và deploy Lambda function để tự động bật/tắt EC2 instance theo lịch biểu.
+- Tích hợp Lambda với SNS để gửi thông báo Slack khi có sự kiện xảy ra.
+- Hiểu rõ về IAM roles và permissions cho Lambda function.
+- Xử lý các event triggers từ CloudWatch Events, SNS, API Gateway.
 
-* Đã tạo và cấu hình AWS Free Tier account thành công.
+**Về CloudWatch và Grafana:**
+- Cấu hình CloudWatch metrics và dashboards để giám sát các EC2 instances.
+- Tạo CloudWatch alarms để thông báo khi có anomalies.
+- Tích hợp Grafana với CloudWatch để trực quan hóa dữ liệu.
+- Phân tích logs trợ với CloudWatch Logs Insights.
 
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
+**Về Resource Tagging:**
+- Tạo chính sách tagging đầu tiên (project, environment, owner, cost-center).
+- Sử dụng Resource Groups để nhóm và quản lý tài nguyên dựa trên tags.
+- Áp dụng resource-based IAM policies cho EC2 dựa trên tags.
 
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
+**Về IAM Tag-based Access Control:**
+- Cấp quyền truy cập EC2 dựa trên principal tags và resource tags.
+- Tạo IAM policies với condition keys như aws:PrincipalTag và aws:ResourceTag.
+- Quản lý team access đến các EC2 instances theo môi trường (dev, staging, prod).
 
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
+**Về AWS Systems Manager:**
+- Sử dụng Parameter Store để lưu trữ cấu hình ứng dụng.
+- Tạo và chạy automation documents để thực hiện các tác vụ vận hành.
+- Sử dụng Maintenance Windows để lên lịch bảo trì hệ thống.
 
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
+**Về Session Manager:**
+- Cấu hình Session Manager để kết nối remote đến EC2 instances mà không cần SSH keys.
+- Giám sát và ghi lại session activities cho audit trails.
 
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
+**Về AWS CloudFormation:**
+- Viết Infrastructure as Code (IaC) templates bằng JSON/YAML.
+- Tạo stacks để tự động deployment các AWS resources.
+- Quản lý stack updates và deletion mà không ảnh hưởng đến production.
+- Sử dụng nested stacks để tái sử dụng templates.
 
 
