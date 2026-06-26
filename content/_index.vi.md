@@ -7,11 +7,11 @@ chapter: false
 
 # Báo cáo thực tập
 ### Thông tin sinh viên:
-&emsp; **Họ và tên:** Đặng Tấn Hưng
+&emsp; **Họ và tên:** Vũ Viết Quang
 
-&emsp; **Số điện thoại:** 0393247155
+&emsp; **Số điện thoại:** 0338163254
 
-&emsp; **Email:** dangtanhung190804@gmail.com
+&emsp; **Email:** vq787898@gmail.com
 
 &emsp; **Trường:** Đại học Công nghệ TP.HCM
 
@@ -25,7 +25,7 @@ chapter: false
 
 &emsp; **Thời gian thực tập:** Từ ngày 20/04/2025 đến ngày 12/07/2025
 
-![Your profile picture](/images/Capture.PNG)
+![Your profile picture](/images/anhthe.jpg)
 
 
 

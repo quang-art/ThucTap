@@ -5,73 +5,70 @@ weight: 1
 chapter: false
 pre: " <b> 3.3. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Tìm Hiểu Giải Pháp Multi-Build Trên Amazon GameLift Servers
+## Giới thiệu
+Trong quá trình vận hành và phát triển các tựa game online, việc thử nghiệm và cập nhật liên tục các phiên bản máy chủ trò chơi là công việc diễn ra thường xuyên. Tuy nhiên, việc triển khai từng phiên bản mới lên toàn bộ hạ tầng máy chủ có thể tiêu tốn nhiều thời gian, làm gián đoạn luồng công việc của đội ngũ kiểm thử (QA) và chơi thử (playtest).
 
-# SESSION POLICIES TRONG AMAZON EKS POD IDENTITY
+Nhằm khắc phục trở ngại này, AWS đã giới thiệu giải pháp Multi-Build trên Amazon GameLift Servers. Tính năng này cho phép nhà phát triển lưu trữ và chạy song song nhiều phiên bản máy chủ game trên cùng một fleet duy nhất, giúp đẩy nhanh tiến độ phát triển và tối ưu quy trình thử nghiệm.
 
-# Tìm Hiểu Giải Pháp Multi-Build trên Amazon GameLift Servers
-Giới thiệu
-Trong quá trình phát triển game online, việc cập nhật và thử nghiệm nhiều phiên bản máy chủ trò chơi là một công việc diễn ra thường xuyên. Tuy nhiên, việc triển khai từng phiên bản mới lên hạ tầng có thể mất nhiều thời gian và ảnh hưởng đến quá trình kiểm thử.
-AWS đã giới thiệu giải pháp Multi-Build trên Amazon GameLift Servers, cho phép nhà phát triển lưu trữ và vận hành nhiều phiên bản máy chủ trò chơi trên cùng một fleet, giúp tăng tốc độ phát triển và thử nghiệm game.
-# Amazon GameLift Servers là gì?
-Amazon GameLift Servers là dịch vụ lưu trữ máy chủ game được quản lý hoàn toàn bởi AWS. Dịch vụ này giúp các nhà phát triển triển khai, quản lý và mở rộng hệ thống máy chủ game trên phạm vi toàn cầu.
-Nhiều tựa game lớn trên thị trường đã sử dụng GameLift để đảm bảo khả năng mở rộng và độ ổn định cho hàng triệu người chơi.
-Vấn đề trong quá trình phát triển game
-Thông thường, mỗi khi có phiên bản máy chủ mới, nhà phát triển phải:
-Build lại server.
-Triển khai lại lên hạ tầng.
-Kiểm tra và xác nhận hoạt động.
-Chuyển đổi giữa các phiên bản khi cần thử nghiệm.
-Quy trình này tốn khá nhiều thời gian, đặc biệt trong các giai đoạn Alpha và Beta khi việc cập nhật diễn ra liên tục.
-# Giải pháp Multi-Build
-Multi-Build là giải pháp cho phép lưu trữ nhiều phiên bản máy chủ trò chơi trên cùng một fleet Amazon GameLift.
-Thay vì phải triển khai lại toàn bộ hệ thống, nhà phát triển chỉ cần:
-Upload phiên bản mới lên Amazon S3.
-Hệ thống tự động đồng bộ xuống các máy chủ GameLift.
-Khi tạo Game Session, chỉ định phiên bản BuildVersion cần sử dụng.
-Máy chủ sẽ tự động khởi động đúng phiên bản tương ứng.
-Nhờ đó việc chuyển đổi giữa các phiên bản diễn ra nhanh chóng và linh hoạt hơn.
-Kiến trúc hoạt động
-# Giải pháp sử dụng hai container chính:
-# 1. Game Server Container
-Container này chịu trách nhiệm:
-Chạy game server.
-Nhận yêu cầu tạo game session.
-Khởi động đúng phiên bản server theo BuildVersion.
-# 2. S3 Sync Container
-Container này hoạt động nền và liên tục:
-Kiểm tra thay đổi trên Amazon S3.
-Đồng bộ các bản build mới.
-Xóa các bản build cũ không còn sử dụng.
-Đảm bảo dữ liệu được tải xuống đầy đủ trước khi thực thi.
-Hai container cùng sử dụng một thư mục chia sẻ để truy cập các bản build đã được đồng bộ.
-Các dịch vụ AWS được sử dụng
-# Giải pháp Multi-Build kết hợp nhiều dịch vụ AWS:
-Amazon GameLift Servers
-Amazon S3
-Amazon ECR
-AWS IAM
-AWS CodeBuild
-AWS CloudFormation
-Amazon CloudWatch Logs
-Nhờ đó toàn bộ quy trình triển khai và quản lý được tự động hóa gần như hoàn toàn.
-Lợi ích của Multi-Build
-Tăng tốc độ phát triển
-Các nhóm phát triển có thể kiểm thử nhiều phiên bản game cùng lúc mà không cần triển khai lại fleet.
-Tiết kiệm thời gian
-Việc upload bản build mới chỉ mất vài phút thay vì thực hiện quy trình triển khai đầy đủ.
-Hỗ trợ Alpha và Beta Testing
-Nhiều phiên bản game có thể tồn tại song song để phục vụ các nhóm người chơi thử nghiệm khác nhau.
-Dễ dàng quản lý
-Các bản build được quản lý tập trung trên Amazon S3 và tự động đồng bộ tới các máy chủ.
-# Kết luận
-Amazon GameLift Servers Multi-Build là một giải pháp hữu ích dành cho các nhóm phát triển game muốn tăng tốc độ thử nghiệm và phát hành phiên bản mới. Bằng cách cho phép nhiều bản build cùng tồn tại trên một fleet duy nhất, AWS giúp giảm đáng kể thời gian triển khai và tối ưu quy trình phát triển game.
-Đối với các dự án game đang trong giai đoạn Alpha, Beta hoặc phát triển tính năng mới, đây là một giải pháp đáng để tìm hiểu và áp dụng.
+# Amazon GameLift Là Gì?
+Amazon GameLift là dịch vụ lưu trữ máy chủ game chuyên dụng được quản lý hoàn toàn bởi AWS. Dịch vụ này hỗ trợ các nhà phát triển game triển khai, vận hành và tự động mở rộng hệ thống máy chủ trên phạm vi toàn cầu, đảm bảo độ trễ thấp và tính ổn định cao cho hàng triệu game thủ.
+
+# Khó Khăn Trong Quy Trình Cập Nhật Truyền Thống
+Thông thường, mỗi khi có một bản cập nhật máy chủ game mới, quy trình thủ công bắt buộc nhà phát triển phải:
+1. Thực hiện biên dịch lại mã nguồn máy chủ.
+2. Khởi tạo và triển khai lại toàn bộ hạ tầng fleet mới.
+3. Chờ cấu hình mạng và kiểm tra khả năng kết nối.
+4. Chuyển đổi thủ công giữa các fleet khác nhau để phục vụ thử nghiệm chéo.
+Quy trình này mất rất nhiều thời gian, đặc biệt là trong giai đoạn thử nghiệm Alpha và Beta khi các bản cập nhật được phát hành liên tục hàng ngày.
+
+# Giải Pháp Multi-Build
+Giải pháp Multi-Build cho phép nhiều bản build máy chủ trò chơi cùng tồn tại và hoạt động trên cùng một fleet Amazon GameLift. Thay vì phải tái khởi động lại toàn bộ hệ thống hạ tầng, quy trình được rút gọn như sau:
+1. **Tải bản build lên Amazon S3:** Đóng gói và upload phiên bản mới lên S3 bucket.
+2. **Đồng bộ hóa tự động:** Hệ thống chạy ngầm tự động đồng bộ hóa các tệp tin này xuống các máy chủ vật lý của GameLift.
+3. **Chỉ định phiên bản:** Khi yêu cầu tạo Game Session (Phiên chơi game), chỉ cần truyền tham số `BuildVersion` mong muốn.
+4. **Khởi chạy thông minh:** Máy chủ GameLift sẽ tự động kích hoạt tệp chạy của phiên bản tương ứng.
+Nhờ cơ chế này, việc chuyển đổi giữa các phiên bản game diễn ra vô cùng nhanh chóng, linh hoạt và tối ưu tài nguyên.
+
+# Kiến Trúc Hoạt Động
+Mô hình giải pháp này vận hành thông qua sự kết hợp của hai container chính chạy song song trên mỗi máy chủ:
+
+## 1. Game Server Container
+- Chịu trách nhiệm thực thi các phiên bản game server.
+- Tiếp nhận các yêu cầu khởi tạo game session từ người chơi.
+- Khởi chạy chính xác phiên bản game dựa theo giá trị `BuildVersion` được yêu cầu.
+
+## 2. S3 Sync Container
+- Hoạt động liên tục ở chế độ chạy ngầm (background daemon).
+- Theo dõi các thay đổi và cập nhật trên Amazon S3 bucket.
+- Tải các bản build mới về thư mục chia sẻ cục bộ.
+- Tự động dọn dẹp các bản build cũ không còn sử dụng để giải phóng dung lượng đĩa.
+- Đảm bảo dữ liệu được tải xuống hoàn tất và toàn vẹn trước khi game server gọi thực thi.
+
+Cả hai container này cùng gắn kết (mount) chung một thư mục lưu trữ để đảm bảo việc đọc ghi và thực thi các bản build được diễn ra trơn tru.
+
+# Các Dịch Vụ AWS Được Tích Hợp
+Giải pháp Multi-Build là sự kết hợp chặt chẽ của nhiều dịch vụ AWS:
+- **Amazon GameLift Servers:** Đóng vai trò làm hạ tầng quản lý phiên chơi và điều phối máy chủ.
+- **Amazon S3:** Nơi lưu trữ tập trung các bản build của game server.
+- **Amazon ECR:** Quản lý mã nguồn và hình ảnh container cho các dịch vụ.
+- **AWS IAM:** Cung cấp cơ chế phân quyền an toàn giữa các dịch vụ.
+- **AWS CodeBuild:** Tự động hóa quy trình đóng gói và xây dựng container.
+- **AWS CloudFormation:** Định nghĩa toàn bộ hạ tầng dưới dạng mã nguồn (IaC).
+- **Amazon CloudWatch Logs:** Ghi nhận nhật ký hoạt động phục vụ giám sát và gỡ lỗi.
+
+# Lợi Ích Của Giải Pháp Multi-Build
+- **Đẩy nhanh tiến độ phát triển:** Giúp các nhóm kỹ thuật thử nghiệm song song nhiều tính năng hoặc bản sửa lỗi mà không cần tốn thời gian tạo fleet mới.
+- **Tiết kiệm thời gian tối đa:** Quá trình cập nhật bản build mới chỉ diễn ra trong vài phút thay vì phải chờ đợi hàng giờ để triển khai hạ tầng.
+- **Hỗ trợ đắc lực cho Alpha/Beta:** Cho phép chạy nhiều phiên bản game khác nhau để phục vụ các nhóm game thủ thử nghiệm riêng biệt.
+- **Vận hành đơn giản:** Quản lý tập trung các bản build trên S3 và tự động hóa toàn bộ quy trình đồng bộ hóa xuống máy chủ.
+
+# Kết Luận
+Giải pháp Multi-Build trên Amazon GameLift Servers là công cụ vô cùng mạnh mẽ cho các nhà phát triển game muốn rút ngắn chu kỳ thử nghiệm và phát hành. Bằng cách gom nhiều bản build chạy chung trên một fleet duy nhất, AWS giúp giảm đáng kể chi phí hạ tầng và tối ưu hóa quy trình phát triển game. Đây chắc chắn là giải pháp rất đáng để các studio game ứng dụng trong giai đoạn thử nghiệm Alpha, Beta hoặc khi cần lặp lại tính năng nhanh chóng.
+
 # Hình ảnh
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 
-# Link tài liệu tham khảo: 
+# Link tài liệu tham khảo:
 https://aws.amazon.com/vi/blogs/gametech/rapid-game-server-iteration-on-amazon-gamelift-servers/
