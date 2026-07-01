@@ -1,0 +1,1920 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Ticketing App - Complete Infrastructure Stack (Production-Ready, Matches Source Code)'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: ticketing
+    Description: Environment name prefix for resources
+  
+  DBMasterUsername:
+    Type: String
+    Default: postgres
+    NoEcho: true
+    Description: Master username for RDS
+  
+  DBName:
+    Type: String
+    Default: ticketing_db
+    Description: Database name
+  
+  OpsNotificationEmail:
+    Type: String
+    Default: phuonglinhit2k3@gmail.com
+    Description: Email for ops notifications
+  
+  UserNotificationEmail:
+    Type: String
+    Default: thinh270924@gmail.com
+    Description: Email for user notifications
+
+  # SMTP Configuration for Worker
+  SmtpUsername:
+    Type: String
+    Default: dummy_user
+    NoEcho: true
+    Description: SMTP Username for SES
+  
+  SmtpPassword:
+    Type: String
+    Default: dummy_password
+    NoEcho: true
+    Description: SMTP Password for SES
+  
+  MailFrom:
+    Type: String
+    Default: thinh270924@gmail.com
+    Description: Email address for sending notifications
+  
+  MailFromName:
+    Type: String
+    Default: Ticket Booking
+    Description: Display name for email sender
+
+  ReservationTimeoutMinutes:
+    Type: Number
+    Default: 10
+    Description: Reservation timeout in minutes
+
+Resources:
+  #============================================================================
+  # 1. VPC & NETWORKING
+  #============================================================================
+  
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'VPC-Demo-${EnvironmentName}'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: TicketingApp
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-igw'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Public Subnets
+  SubnetPublicA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Subnet-Public-A
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  SubnetPublicB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Subnet-Public-B
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Private Subnets
+  SubnetPrivateA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: Subnet-Private-A
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  SubnetPrivateB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: Subnet-Private-B
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Elastic IPs for NAT Gateways
+  NatGatewayEIPA:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: NAT-EIP-A
+
+  NatGatewayEIPB:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: NAT-EIP-B
+
+  # NAT Gateways
+  NatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIPA.AllocationId
+      SubnetId: !Ref SubnetPublicA
+      Tags:
+        - Key: Name
+          Value: NAT-GW-A
+
+  NatGatewayB:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIPB.AllocationId
+      SubnetId: !Ref SubnetPublicB
+      Tags:
+        - Key: Name
+          Value: NAT-GW-B
+
+  # Route Tables
+  RouteTablePublic:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: RT-Public
+
+  RouteTablePrivateA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: RT-Private-A
+
+  RouteTablePrivateB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: RT-Private-B
+
+  # Routes
+  RoutePublicInternet:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  RoutePrivateANat:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTablePrivateA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayA
+
+  RoutePrivateBNat:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTablePrivateB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayB
+
+  # Route Table Associations
+  SubnetPublicARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPublicA
+      RouteTableId: !Ref RouteTablePublic
+
+  SubnetPublicBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPublicB
+      RouteTableId: !Ref RouteTablePublic
+
+  SubnetPrivateARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPrivateA
+      RouteTableId: !Ref RouteTablePrivateA
+
+  SubnetPrivateBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPrivateB
+      RouteTableId: !Ref RouteTablePrivateB
+
+  #============================================================================
+  # 1.1 VPC FLOW LOGS
+  #============================================================================
+  
+  VPCFlowLogsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/vpc/${EnvironmentName}-flow-logs'
+      RetentionInDays: 30
+
+  VPCFlowLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-vpc-flow-logs-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: vpc-flow-logs.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: FlowLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource: !Sub '${VPCFlowLogsLogGroup.Arn}:*'
+
+  VPCFlowLogs:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      ResourceType: VPC
+      ResourceId: !Ref VPC
+      TrafficType: ALL
+      LogDestinationType: cloud-watch-logs
+      LogGroupName: !Ref VPCFlowLogsLogGroup
+      DeliverLogsPermissionArn: !GetAtt VPCFlowLogsRole.Arn
+      MaxAggregationInterval: 60
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-vpc-flow-logs'
+
+  #============================================================================
+  # 2. SECURITY GROUPS
+  #============================================================================
+  
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-alb-sg'
+      GroupDescription: Security group for Application Load Balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-alb-sg'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  EC2WorkerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-ec2-worker-sg'
+      GroupDescription: Security group for EC2 instances
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-ec2-worker-sg'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RedisSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-redis-sg'
+      GroupDescription: Security group for ElastiCache Redis
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !Ref EC2WorkerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-redis-sg'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RDSProxySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-rds-proxy-sg'
+      GroupDescription: Security group for RDS Proxy
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref EC2WorkerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-rds-proxy-sg'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RDSInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${EnvironmentName}-rds-instance-sg'
+      GroupDescription: Security group for RDS instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref RDSProxySecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-rds-instance-sg'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  #============================================================================
+  # 3. S3 BUCKETS
+  #============================================================================
+  
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'frontend-${EnvironmentName}-app-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: frontend-bucket
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontOAC
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${FrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}'
+
+  # Assets Bucket (for match images, e-tickets, etc.)
+  AssetsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${EnvironmentName}-assets-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3000
+      Tags:
+        - Key: Name
+          Value: assets-bucket
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  #============================================================================
+  # 4. SQS QUEUES
+  #============================================================================
+  
+  BookingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: checkout-dlq.fifo
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  BookingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: booking-queue.fifo
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 345600
+      ReceiveMessageWaitTimeSeconds: 20
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BookingDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # CloudWatch Alarm for DLQ
+  DLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-checkout-dlq-alarm'
+      AlarmDescription: Alarm when DLQ has messages - potential lost bookings!
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt BookingDLQ.QueueName
+      AlarmActions:
+        - !Ref OpsNotificationTopic
+
+  #============================================================================
+  # 5. SNS TOPICS
+  #============================================================================
+  
+  OpsNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: booking-notification-topic
+      DisplayName: Booking Ops Notifications
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  OpsNotificationSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref OpsNotificationTopic
+      Protocol: email
+      Endpoint: !Ref OpsNotificationEmail
+
+  UserNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: booking-notification-topic-for-user
+      DisplayName: Booking User Notifications
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  UserNotificationSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref UserNotificationTopic
+      Protocol: email
+      Endpoint: !Ref UserNotificationEmail
+
+  #============================================================================
+  # 6. COGNITO
+  #============================================================================
+  
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${EnvironmentName}-user-pool'
+      UsernameAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+          - Name: verified_phone_number
+            Priority: 2
+      DeletionProtection: ACTIVE
+      UserPoolTier: ESSENTIALS
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ticketing-booking
+      UserPoolId: !Ref CognitoUserPool
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub '${EnvironmentName}-${AWS::AccountId}'
+      UserPoolId: !Ref CognitoUserPool
+
+  #============================================================================
+  # 7. RDS POSTGRESQL
+  #============================================================================
+  
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub 'db-subnet-group-${EnvironmentName}'
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !Ref SubnetPrivateA
+        - !Ref SubnetPrivateB
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Secrets Manager - Auto-generate password
+  RDSSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${EnvironmentName}/rds/credentials'
+      Description: RDS credentials for Ticketing App
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DBMasterUsername}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: false
+        ExcludeCharacters: '"@/\'''
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub 'database-${EnvironmentName}'
+      DBName: !Ref DBName
+      Engine: postgres
+      EngineVersion: '16.3'
+      DBInstanceClass: db.t3.small
+      AllocatedStorage: 20
+      MaxAllocatedStorage: 1000
+      StorageType: gp3
+      Iops: 3000
+      MasterUsername: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+      MultiAZ: true
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref RDSInstanceSecurityGroup
+      StorageEncrypted: true
+      BackupRetentionPeriod: 7
+      EnablePerformanceInsights: true
+      PerformanceInsightsRetentionPeriod: 7
+      MonitoringInterval: 60
+      MonitoringRoleArn: !GetAtt RDSMonitoringRole.Arn
+      DeletionProtection: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'database-${EnvironmentName}'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RDSSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref RDSSecret
+      TargetId: !Ref RDSInstance
+      TargetType: AWS::RDS::DBInstance
+
+  RDSMonitoringRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'rds-monitoring-role-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: monitoring.rds.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole
+
+  #============================================================================
+  # 8. RDS PROXY
+  #============================================================================
+  
+  RDSProxyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'rds-proxy-role-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: rds.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: RDSProxySecretsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref RDSSecret
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    kms:ViaService: !Sub 'secretsmanager.${AWS::Region}.amazonaws.com'
+
+  RDSProxy:
+    Type: AWS::RDS::DBProxy
+    DependsOn: RDSSecretAttachment
+    Properties:
+      DBProxyName: !Sub 'rds-proxy-${EnvironmentName}'
+      EngineFamily: POSTGRESQL
+      Auth:
+        - AuthScheme: SECRETS
+          SecretArn: !Ref RDSSecret
+          IAMAuth: DISABLED
+      RoleArn: !GetAtt RDSProxyRole.Arn
+      VpcSubnetIds:
+        - !Ref SubnetPrivateA
+        - !Ref SubnetPrivateB
+      VpcSecurityGroupIds:
+        - !Ref RDSProxySecurityGroup
+      RequireTLS: false
+      IdleClientTimeout: 1800
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  RDSProxyTargetGroup:
+    Type: AWS::RDS::DBProxyTargetGroup
+    Properties:
+      DBProxyName: !Ref RDSProxy
+      TargetGroupName: default
+      DBInstanceIdentifiers:
+        - !Ref RDSInstance
+
+  #============================================================================
+  # 9. ELASTICACHE REDIS
+  #============================================================================
+  
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: !Sub '${EnvironmentName}-redis-subnet-group'
+      Description: Subnet group for Redis
+      SubnetIds:
+        - !Ref SubnetPrivateA
+        - !Ref SubnetPrivateB
+
+  RedisReplicationGroup:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: !Sub '${EnvironmentName}-redis'
+      ReplicationGroupDescription: Redis Cluster for Ticket Booking
+      Engine: redis
+      EngineVersion: '7.0'
+      CacheNodeType: cache.t3.micro
+      NumNodeGroups: 1
+      ReplicasPerNodeGroup: 1
+      AutomaticFailoverEnabled: true
+      MultiAZEnabled: true
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      SecurityGroupIds:
+        - !Ref RedisSecurityGroup
+      Port: 6379
+      SnapshotRetentionLimit: 7
+      SnapshotWindow: '03:00-05:00'
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  #============================================================================
+  # 10. IAM ROLES FOR ELASTIC BEANSTALK
+  #============================================================================
+  
+  BeanstalkEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-beanstalk-ec2-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker
+        - arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess
+      Policies:
+        # SQS Access - specific queues only
+        - PolicyName: SQSLimitedAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ChangeMessageVisibility
+                Resource:
+                  - !GetAtt BookingQueue.Arn
+                  - !GetAtt BookingDLQ.Arn
+        
+        # SES Access - send email
+        - PolicyName: SESLimitedAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: '*'
+        
+        # SNS Access - specific topics only
+        - PolicyName: SNSLimitedAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource:
+                  - !Ref OpsNotificationTopic
+                  - !Ref UserNotificationTopic
+        
+        # Secrets Manager - read DB credentials
+        - PolicyName: SecretsManagerReadAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref RDSSecret
+        
+        # S3 Access - assets bucket
+        - PolicyName: S3AssetsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt AssetsBucket.Arn
+                  - !Sub '${AssetsBucket.Arn}/*'
+
+  BeanstalkEC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub '${EnvironmentName}-beanstalk-ec2-profile'
+      Roles:
+        - !Ref BeanstalkEC2Role
+
+  BeanstalkServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-beanstalk-service-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: elasticbeanstalk.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkManagedUpdatesCustomerRolePolicy
+
+  #============================================================================
+  # 11. ELASTIC BEANSTALK - BACKEND ENVIRONMENT
+  #============================================================================
+  
+  BeanstalkApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub '${EnvironmentName}-App'
+      Description: Ticketing Application
+      ResourceLifecycleConfig:
+        ServiceRole: !GetAtt BeanstalkServiceRole.Arn
+        VersionLifecycleConfig:
+          MaxCountRule:
+            DeleteSourceFromS3: true
+            Enabled: true
+            MaxCount: 10
+
+  # Backend Environment
+  BeanstalkBackendEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    DependsOn:
+      - RDSProxyTargetGroup
+      - RedisReplicationGroup
+    Properties:
+      ApplicationName: !Ref BeanstalkApplication
+      EnvironmentName: !Sub '${EnvironmentName}-Backend-env'
+      PlatformArn: !Sub 'arn:aws:elasticbeanstalk:${AWS::Region}::platform/Node.js 20 running on 64bit Amazon Linux 2023'
+      Tier:
+        Name: WebServer
+        Type: Standard
+      OptionSettings:
+        # VPC Configuration
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: !Ref VPC
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !Sub '${SubnetPrivateA},${SubnetPrivateB}'
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !Sub '${SubnetPublicA},${SubnetPublicB}'
+        - Namespace: aws:ec2:vpc
+          OptionName: AssociatePublicIpAddress
+          Value: 'false'
+        
+        # Instance Configuration
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t3.micro
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref BeanstalkEC2InstanceProfile
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !Ref EC2WorkerSecurityGroup
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: DisableIMDSv1
+          Value: 'true'
+        
+        # Auto Scaling
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: '2'
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: '4'
+        
+        # Scaling Triggers - CPUUtilization
+        - Namespace: aws:autoscaling:trigger
+          OptionName: MeasureName
+          Value: CPUUtilization
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Statistic
+          Value: Average
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Unit
+          Value: Percent
+        - Namespace: aws:autoscaling:trigger
+          OptionName: UpperThreshold
+          Value: '70'
+        - Namespace: aws:autoscaling:trigger
+          OptionName: LowerThreshold
+          Value: '30'
+        
+        # Load Balancer
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: LoadBalanced
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerType
+          Value: application
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: !Ref BeanstalkServiceRole
+        - Namespace: aws:elbv2:loadbalancer
+          OptionName: SecurityGroups
+          Value: !Ref ALBSecurityGroup
+        
+        # Health
+        - Namespace: aws:elasticbeanstalk:healthreporting:system
+          OptionName: SystemType
+          Value: enhanced
+        - Namespace: aws:elasticbeanstalk:environment:process:default
+          OptionName: HealthCheckPath
+          Value: /health
+        
+        # Deployment
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: DeploymentPolicy
+          Value: Rolling
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: BatchSizeType
+          Value: Percentage
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: BatchSize
+          Value: '50'
+        
+        #=== ENVIRONMENT VARIABLES ===
+        
+        # Application Port
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: PORT
+          Value: '8080'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
+        
+        # Database
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DATABASE_URL
+          Value: !Sub 
+            - 'postgresql://${Username}:${Password}@${Host}:5432/${DBName}'
+            - Username: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:username}}'
+              Password: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+              Host: !GetAtt RDSProxy.Endpoint
+              DBName: !Ref DBName
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_HOST
+          Value: !GetAtt RDSProxy.Endpoint
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_PORT
+          Value: '5432'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_NAME
+          Value: !Ref DBName
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_USER
+          Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:username}}'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_PASSWORD
+          Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+        
+        # Redis
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_HOST
+          Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Address
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_PRIMARY_HOST
+          Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Address
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_READER_HOST
+          Value: !GetAtt RedisReplicationGroup.ReaderEndPoint.Address
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_PORT
+          Value: '6379'
+        
+        # S3
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_BUCKET_NAME
+          Value: !Ref AssetsBucket
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_REGION
+          Value: !Ref AWS::Region
+        
+        # SQS
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SQS_BOOKING_QUEUE_URL
+          Value: !Ref BookingQueue
+        
+        # SNS
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SNS_OPS_TOPIC_ARN
+          Value: !Ref OpsNotificationTopic
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SNS_USER_TOPIC_ARN
+          Value: !Ref UserNotificationTopic
+        
+        # Cognito
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: COGNITO_USER_POOL_ID
+          Value: !Ref CognitoUserPool
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: COGNITO_CLIENT_ID
+          Value: !Ref CognitoUserPoolClient
+        
+        # CloudFront Domain
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: CLOUDFRONT_DOMAIN
+          Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+       
+        # MoMo Payment Gateway
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_PARTNER_CODE
+          Value: "MOMO"
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_ACCESS_KEY
+          Value: "F8BBA842ECF85"
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_SECRET_KEY
+          Value: "K951B6PE1waDMi640xX08PD3vg6EkVlz"
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_ENDPOINT
+          Value: "https://test-payment.momo.vn/v2/gateway/api"
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_IPN_URL
+          Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/api/payments/momo/ipn'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MOMO_REDIRECT_URL
+          Value: !Sub 'https://${CloudFrontDistribution.DomainName}/payment/result'
+        
+        # Business Logic
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: RESERVATION_TIMEOUT_MINUTES
+          Value: !Ref ReservationTimeoutMinutes
+
+  #============================================================================
+  # 11.1 ELASTIC BEANSTALK - WORKER ENVIRONMENT
+  #============================================================================
+  
+  BeanstalkWorkerEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    DependsOn:
+      - RDSProxyTargetGroup
+      - RedisReplicationGroup
+    Properties:
+      ApplicationName: !Ref BeanstalkApplication
+      EnvironmentName: !Sub '${EnvironmentName}-Worker-env'
+      PlatformArn: !Sub 'arn:aws:elasticbeanstalk:${AWS::Region}::platform/Node.js 20 running on 64bit Amazon Linux 2023'
+      Tier:
+        Name: WebServer
+        Type: Standard
+      OptionSettings:
+        # VPC Configuration
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: !Ref VPC
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !Sub '${SubnetPrivateA},${SubnetPrivateB}'
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !Sub '${SubnetPublicA},${SubnetPublicB}'
+        - Namespace: aws:ec2:vpc
+          OptionName: AssociatePublicIpAddress
+          Value: 'false'
+        
+        # Instance Configuration
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t3.micro
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref BeanstalkEC2InstanceProfile
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !Ref EC2WorkerSecurityGroup
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: DisableIMDSv1
+          Value: 'true'
+        
+        # Auto Scaling
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: '2'
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: '4'
+        
+        # Scaling Triggers
+        - Namespace: aws:autoscaling:trigger
+          OptionName: MeasureName
+          Value: CPUUtilization
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Statistic
+          Value: Average
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Unit
+          Value: Percent
+        - Namespace: aws:autoscaling:trigger
+          OptionName: UpperThreshold
+          Value: '70'
+        - Namespace: aws:autoscaling:trigger
+          OptionName: LowerThreshold
+          Value: '30'
+        
+        # Load Balancer
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: LoadBalanced
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerType
+          Value: application
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: !Ref BeanstalkServiceRole
+        
+        # Health
+        - Namespace: aws:elasticbeanstalk:healthreporting:system
+          OptionName: SystemType
+          Value: enhanced
+        
+        #=== WORKER ENVIRONMENT VARIABLES ===
+        
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_ACCOUNT_ID
+          Value: !Ref AWS::AccountId
+        
+        # Database
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DATABASE_URL
+          Value: !Sub 
+            - 'postgresql://${Username}:${Password}@${Host}:5432/${DBName}'
+            - Username: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:username}}'
+              Password: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+              Host: !GetAtt RDSProxy.Endpoint
+              DBName: !Ref DBName
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_HOST
+          Value: !GetAtt RDSProxy.Endpoint
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_PORT
+          Value: '5432'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_NAME
+          Value: !Ref DBName
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_USER
+          Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:username}}'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DB_PASSWORD
+          Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+        
+        # Redis
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_HOST
+          Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Address
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: REDIS_PORT
+          Value: '6379'
+        
+        # S3
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_BUCKET_NAME
+          Value: !Ref AssetsBucket
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: S3_REGION
+          Value: !Ref AWS::Region
+        
+        # SQS
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SQS_BOOKING_QUEUE_URL
+          Value: !Ref BookingQueue
+        
+        # SNS
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SNS_OPS_TOPIC_ARN
+          Value: !Ref OpsNotificationTopic
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SNS_USER_TOPIC_ARN
+          Value: !Ref UserNotificationTopic
+        
+        # Worker-specific settings
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: WORKER_CONCURRENCY
+          Value: '5'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: VISIBILITY_TIMEOUT_SECONDS
+          Value: '60'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: POLL_WAIT_TIME_SECONDS
+          Value: '20'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: RESERVATION_TIMEOUT_MINUTES
+          Value: !Ref ReservationTimeoutMinutes
+        
+        # SMTP/Email
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SMTP_HOST
+          Value: !Sub 'email-smtp.${AWS::Region}.amazonaws.com'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SMTP_PORT
+          Value: '587'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SMTP_USERNAME
+          Value: !Ref SmtpUsername
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SMTP_PASSWORD
+          Value: !Ref SmtpPassword
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MAIL_FROM
+          Value: !Ref MailFrom
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: MAIL_FROM_NAME
+          Value: !Ref MailFromName
+
+  #============================================================================
+  # 12. CLOUDFRONT
+  #============================================================================
+  
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${EnvironmentName}-frontend-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CloudFrontFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub '${EnvironmentName}-NextJsRouting'
+      AutoPublish: true
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          
+          if (!uri.includes('.')) {
+            if (!uri.endsWith('/')) {
+              request.uri = uri + '.html';
+            }
+          }
+          
+          return request;
+        }
+      FunctionConfig:
+        Comment: Handle Next.js static routing
+        Runtime: cloudfront-js-2.0
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+            OriginAccessControlId: !Ref CloudFrontOAC
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt CloudFrontFunction.FunctionMetadata.FunctionARN
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        PriceClass: PriceClass_All
+        HttpVersion: http2and3
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  #============================================================================
+  # 13. API GATEWAY VỚI COGNITO AUTHORIZER
+  #============================================================================
+  
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${EnvironmentName}-api'
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - !Sub 'https://${CloudFrontDistribution.DomainName}'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - content-type
+          - authorization
+        AllowCredentials: true
+
+  # Cognito JWT Authorizer
+  CognitoAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref HttpApi
+      AuthorizerType: JWT
+      Name: !Sub '${EnvironmentName}-cognito-authorizer'
+      IdentitySource:
+        - '$request.header.Authorization'
+      JwtConfiguration:
+        Audience:
+          - !Ref CognitoUserPoolClient
+        Issuer: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}'
+
+  # Integration với Backend ALB (Đã bỏ /{proxy} để tránh lỗi mismatch param)
+  HttpApiIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: HTTP_PROXY
+      IntegrationMethod: ANY
+      IntegrationUri: !Sub 'http://${BeanstalkBackendEnvironment.EndpointURL}'
+      PayloadFormatVersion: '1.0'
+      TimeoutInMillis: 30000
+
+  # Route CÓ Authentication (Protected Routes)
+  HttpApiProtectedRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'ANY /api/{proxy+}'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CognitoAuthorizer
+
+  # Route KHÔNG cần Authentication (Public Routes)
+  HttpApiPublicAuthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /api/auth/login'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  HttpApiPublicRegisterRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /api/auth/register'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  HttpApiPublicRefreshRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /api/auth/refresh'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  HttpApiHealthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /health'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  # MoMo IPN Webhook - KHÔNG cần auth
+  HttpApiMomoIPNRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /api/payments/momo/ipn'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  # Public routes cho matches (xem danh sách trận đấu)
+  HttpApiPublicMatchesRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /api/matches'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  HttpApiPublicMatchDetailRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /api/matches/{matchId}'
+      Target: !Sub 'integrations/${HttpApiIntegration}'
+      AuthorizationType: NONE
+
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: '$default'
+      AutoDeploy: true
+
+  #============================================================================
+  # 14. CI/CD - BACKEND PIPELINE
+  #============================================================================
+  
+  BackendCodeCommitRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Sub '${EnvironmentName}-backend'
+      RepositoryDescription: Ticketing App Backend Repository
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  CodePipelineArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'codepipeline-${AWS::Region}-${AWS::AccountId}-${EnvironmentName}'
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'codepipeline-${EnvironmentName}-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodePipelineAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                  - codecommit:*
+                  - codebuild:*
+                  - elasticbeanstalk:*
+                  - ec2:*
+                  - elasticloadbalancing:*
+                  - autoscaling:*
+                  - cloudwatch:*
+                  - sns:*
+                  - cloudformation:*
+                  - iam:PassRole
+                Resource: '*'
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'codebuild-${EnvironmentName}-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: '*'
+
+  BackendCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub '${EnvironmentName}-backend-build'
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:5.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              runtime-versions:
+                nodejs: 20
+            pre_build:
+              commands:
+                - echo "Installing dependencies..."
+                - npm ci --production
+            build:
+              commands:
+                - echo "Build completed"
+          artifacts:
+            files:
+              - '**/*'
+            exclude-paths:
+              - node_modules/.cache/**/*
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  BackendCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub '${EnvironmentName}-backend-pipeline'
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref CodePipelineArtifactBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+                Version: '1'
+              Configuration:
+                RepositoryName: !GetAtt BackendCodeCommitRepository.Name
+                BranchName: main
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref BackendCodeBuildProject
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: ElasticBeanstalk
+                Version: '1'
+              Configuration:
+                ApplicationName: !Ref BeanstalkApplication
+                EnvironmentName: !Ref BeanstalkBackendEnvironment
+              InputArtifacts:
+                - Name: BuildOutput
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # EventBridge Rule for Backend CodeCommit trigger
+  BackendCodeCommitEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub '${EnvironmentName}-backend-codecommit-trigger'
+      Description: Trigger backend pipeline on CodeCommit push
+      EventPattern:
+        source:
+          - aws.codecommit
+        detail-type:
+          - CodeCommit Repository State Change
+        resources:
+          - !GetAtt BackendCodeCommitRepository.Arn
+        detail:
+          event:
+            - referenceCreated
+            - referenceUpdated
+          referenceType:
+            - branch
+          referenceName:
+            - main
+      Targets:
+        - Arn: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${BackendCodePipeline}'
+          Id: BackendCodePipelineTarget
+          RoleArn: !GetAtt EventBridgeCodePipelineRole.Arn
+
+  EventBridgeCodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-eventbridge-codepipeline-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: StartPipelineExecution
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: codepipeline:StartPipelineExecution
+                Resource:
+                  - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${BackendCodePipeline}'
+                  - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${WorkerCodePipeline}'
+
+  #============================================================================
+  # 14.1 CI/CD - WORKER PIPELINE
+  #============================================================================
+  
+  WorkerCodeCommitRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Sub '${EnvironmentName}-worker'
+      RepositoryDescription: Ticketing App Worker Repository
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  WorkerCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub '${EnvironmentName}-worker-build'
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:5.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              runtime-versions:
+                nodejs: 20
+            pre_build:
+              commands:
+                - echo "Installing dependencies..."
+                - npm ci --production
+            build:
+              commands:
+                - echo "Build completed"
+          artifacts:
+            files:
+              - '**/*'
+            exclude-paths:
+              - node_modules/.cache/**/*
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  WorkerCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub '${EnvironmentName}-worker-pipeline'
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref CodePipelineArtifactBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+                Version: '1'
+              Configuration:
+                RepositoryName: !GetAtt WorkerCodeCommitRepository.Name
+                BranchName: main
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref WorkerCodeBuildProject
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: ElasticBeanstalk
+                Version: '1'
+              Configuration:
+                ApplicationName: !Ref BeanstalkApplication
+                EnvironmentName: !Ref BeanstalkWorkerEnvironment
+              InputArtifacts:
+                - Name: BuildOutput
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # EventBridge Rule for Worker CodeCommit trigger
+  WorkerCodeCommitEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub '${EnvironmentName}-worker-codecommit-trigger'
+      Description: Trigger worker pipeline on CodeCommit push
+      EventPattern:
+        source:
+          - aws.codecommit
+        detail-type:
+          - CodeCommit Repository State Change
+        resources:
+          - !GetAtt WorkerCodeCommitRepository.Arn
+        detail:
+          event:
+            - referenceCreated
+            - referenceUpdated
+          referenceType:
+            - branch
+          referenceName:
+            - main
+      Targets:
+        - Arn: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${WorkerCodePipeline}'
+          Id: WorkerCodePipelineTarget
+          RoleArn: !GetAtt EventBridgeCodePipelineRole.Arn
+
+#============================================================================
+# OUTPUTS
+#============================================================================
+
+Outputs:
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub '${EnvironmentName}-VPCId'
+
+  CloudFrontURL:
+    Description: CloudFront Distribution URL (Frontend)
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+
+  APIGatewayURL:
+    Description: API Gateway Endpoint
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+
+  BackendEnvironmentURL:
+    Description: Elastic Beanstalk Backend Environment URL
+    Value: !Sub 'http://${BeanstalkBackendEnvironment.EndpointURL}'
+
+  WorkerEnvironmentURL:
+    Description: Elastic Beanstalk Worker Environment URL
+    Value: !Sub 'http://${BeanstalkWorkerEnvironment.EndpointURL}'
+
+  RDSProxyEndpoint:
+    Description: RDS Proxy Endpoint
+    Value: !GetAtt RDSProxy.Endpoint
+
+  RDSSecretArn:
+    Description: RDS Credentials Secret ARN
+    Value: !Ref RDSSecret
+    Export:
+      Name: !Sub '${EnvironmentName}-RDSSecretArn'
+
+  RedisEndpoint:
+    Description: Redis Primary Endpoint
+    Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Address
+
+  RedisReaderEndpoint:
+    Description: Redis Reader Endpoint
+    Value: !GetAtt RedisReplicationGroup.ReaderEndPoint.Address
+
+  CognitoUserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref CognitoUserPool
+
+  CognitoClientId:
+    Description: Cognito App Client ID
+    Value: !Ref CognitoUserPoolClient
+
+  SQSQueueURL:
+    Description: Booking Queue URL
+    Value: !Ref BookingQueue
+
+  AssetsBucketName:
+    Description: Assets S3 Bucket Name
+    Value: !Ref AssetsBucket
+
+  BackendCodeCommitRepoURL:
+    Description: Backend CodeCommit Repository Clone URL
+    Value: !GetAtt BackendCodeCommitRepository.CloneUrlHttp
+
+  WorkerCodeCommitRepoURL:
+    Description: Worker CodeCommit Repository Clone URL
+    Value: !GetAtt WorkerCodeCommitRepository.CloneUrlHttp
+
+  BackendPipelineName:
+    Description: Backend CodePipeline Name
+    Value: !Ref BackendCodePipeline
+
+  WorkerPipelineName:
+    Description: Worker CodePipeline Name
+    Value: !Ref WorkerCodePipeline
+
+  MomoIPNURL:
+    Description: MoMo IPN Webhook URL
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/api/payments/momo/ipn'
+
+  VPCFlowLogsGroup:
+    Description: VPC Flow Logs CloudWatch Log Group
+    Value: !Ref VPCFlowLogsLogGroup

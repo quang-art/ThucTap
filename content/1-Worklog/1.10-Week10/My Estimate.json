@@ -1,0 +1,213 @@
+{
+	"Name": "My Estimate",
+	"Total Cost": {
+		"monthly": "248.91",
+		"upfront": "0.00",
+		"12 months": "2986.92"
+	},
+	"Metadata": {
+		"Currency": "USD",
+		"Locale": "en_US",
+		"Created On": "2026-07-01",
+		"Legal Disclaimer": "AWS Pricing Calculator provides only an estimate of your AWS fees and doesn't include any taxes that might apply. Your actual fees depend on a variety of factors, including your actual usage of AWS services.",
+		"Share Url": "https://calculator.aws/#/estimate?id=11bf9bdfdaabe3fc7390d59ad3a83baf9c1e18e5"
+	},
+	"Groups": {
+		"Services": [
+			{
+				"Service Name": "Amazon EC2 ",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "21.90",
+					"upfront": "0.00",
+					"12 months": "262.80"
+				},
+				"Properties": {
+					"Tenancy": "Shared Instances",
+					"Operating system": "Linux",
+					"Workload": "Consistent, Number of instances: 4",
+					"Advance EC2 instance": "t3.micro",
+					"Pricing strategy": "Compute Savings Plans 1yr No Upfront",
+					"Enable monitoring": "disabled",
+					"DT Inbound: Not selected": "0 TB per month",
+					"DT Outbound: Not selected": "0 TB per month",
+					"DT Intra-Region:": "0 TB per month"
+				}
+			},
+			{
+				"Service Name": "Application Load Balancer",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "33.25",
+					"upfront": "0.00",
+					"12 months": "399.00"
+				},
+				"Properties": {
+					"Number of Application Load Balancers": "2"
+				}
+			},
+			{
+				"Service Name": "Amazon RDS for PostgreSQL",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "97.31",
+					"upfront": "0.00",
+					"12 months": "1167.72"
+				},
+				"Properties": {
+					"Storage amount": "20 GB",
+					"Storage volume": "General Purpose SSD (gp3)",
+					"Nodes": "1",
+					"Instance Type": "db.t3.small",
+					"Utilization (On-Demand only)": "100 %Utilized/Month",
+					"Deployment Option": "Multi-AZ",
+					"Pricing Model": "OnDemand"
+				}
+			},
+			{
+				"Service Name": "Amazon ElastiCache",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "24.82",
+					"upfront": "0.00",
+					"12 months": "297.84"
+				},
+				"Properties": {
+					"Engine": "Redis OSS",
+					"Instance type": "cache.r6gd.12xlarge",
+					"Cache Engine": "Memcached",
+					"Nodes": "0",
+					"Utilization (On-Demand only)": "100 %Utilized/Month",
+					"Cache Node Type": "Memory optimized",
+					"Pricing strategy": "OnDemand"
+				}
+			},
+			{
+				"Service Name": "Network Address Translation (NAT) Gateway",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "66.15",
+					"upfront": "0.00",
+					"12 months": "793.80"
+				},
+				"Properties": {
+					"Number of Regional NAT Gateways": "1",
+					"Number of Availability Zones Regional NAT Gateways is active in": "2",
+					"Number of NAT Gateways": "0"
+				}
+			},
+			{
+				"Service Name": "S3 Standard",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.53",
+					"upfront": "0.00",
+					"12 months": "6.36"
+				},
+				"Properties": {
+					"S3 Standard storage": "20 GB per month",
+					"PUT, COPY, POST, LIST requests to S3 Standard": "10000",
+					"GET, SELECT, and all other requests from S3 Standard": "50000"
+				}
+			},
+			{
+				"Service Name": "Amazon CloudFront",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"Free Plan": "1"
+				}
+			},
+			{
+				"Service Name": "Amazon API Gateway",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "1.00",
+					"upfront": "0.00",
+					"12 months": "12.00"
+				},
+				"Properties": {
+					"HTTP API requests units": "millions",
+					"Average size of each request": "34 KB",
+					"REST API request units": "millions",
+					"Cache memory size (GB)": "None",
+					"WebSocket message units": "thousands",
+					"Average message size": "32 KB",
+					"Requests": "1 per month"
+				}
+			},
+			{
+				"Service Name": "AWS Secrets Manager",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.45",
+					"upfront": "0.00",
+					"12 months": "5.40"
+				},
+				"Properties": {
+					"Number of secrets": "1",
+					"Average duration of each secret": "30 days",
+					"Number of API calls": "10000 per month"
+				}
+			},
+			{
+				"Service Name": "Amazon Cognito",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"Optimization Rate for Token Requests": "0",
+					"Optimization Rate for App Clients": "0",
+					"Multi-region replication add-on": "Disabled",
+					"Number of monthly active users (MAU)": "10000"
+				}
+			},
+			{
+				"Service Name": "AWS CodePipeline",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "1.00",
+					"upfront": "0.00",
+					"12 months": "12.00"
+				},
+				"Properties": {
+					"Number of active pipelines of type V1 used per account per month": "2"
+				}
+			},
+			{
+				"Service Name": "AWS CodeBuild",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "2.50",
+					"upfront": "0.00",
+					"12 months": "30.00"
+				},
+				"Properties": {
+					"AWS CodeBuild Compute Type": "On-Demand EC2",
+					"Number of builds in a month": "50",
+					"Search Instance Type": "general1.small",
+					"Operating system": "Linux"
+				}
+			}
+		]
+	}
+}
