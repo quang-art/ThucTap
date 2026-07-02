@@ -1,242 +1,343 @@
 ---
-title : "Prerequiste"
+title : "Prerequisites"
 date : 2024-01-01 
-weight : 2 
+weight : 2
 chapter : false
 pre : " <b> 5.2. </b> "
 ---
 
-#### IAM permissions
-Add the following IAM permission policy to your user account to deploy and cleanup this workshop.
-```
+### Prerequisites
+
+To successfully complete this hands-on workshop to build the **Ticket-App** online event ticketing platform, you need to prepare your local development environment and configure the appropriate AWS account permissions.
+
+---
+
+#### 1. IAM Permissions
+
+You need to use an IAM User or IAM Role with appropriate permissions to clean up and operate the resources in this workshop.
+
+{{% notice note %}}
+For the most convenient personal lab practice and to avoid permission errors (Access Denied), we recommend using **AdministratorAccess** permissions for your lab account.
+{{% /notice %}}
+
+If you want to configure a least privilege policy, follow these steps to create an IAM Policy on the AWS Console:
+
+1. Sign in to the **AWS Management Console** and navigate to the **IAM** service.
+2. Select **Policies** on the left navigation bar, then click **Create policy**.
+3. In the policy creation interface, switch to the **JSON** editor, clear any default template code, and paste the following JSON policy block:
+
+```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:*",
-                "cloudwatch:*",
-                "ec2:AcceptTransitGatewayPeeringAttachment",
-                "ec2:AcceptTransitGatewayVpcAttachment",
-                "ec2:AllocateAddress",
-                "ec2:AssociateAddress",
-                "ec2:AssociateIamInstanceProfile",
-                "ec2:AssociateRouteTable",
-                "ec2:AssociateSubnetCidrBlock",
-                "ec2:AssociateTransitGatewayRouteTable",
-                "ec2:AssociateVpcCidrBlock",
-                "ec2:AttachInternetGateway",
-                "ec2:AttachNetworkInterface",
-                "ec2:AttachVolume",
-                "ec2:AttachVpnGateway",
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:CreateClientVpnEndpoint",
-                "ec2:CreateClientVpnRoute",
-                "ec2:CreateCustomerGateway",
-                "ec2:CreateDhcpOptions",
-                "ec2:CreateFlowLogs",
-                "ec2:CreateInternetGateway",
-                "ec2:CreateLaunchTemplate",
-                "ec2:CreateNetworkAcl",
-                "ec2:CreateNetworkInterface",
-                "ec2:CreateNetworkInterfacePermission",
-                "ec2:CreateRoute",
-                "ec2:CreateRouteTable",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateSubnet",
-                "ec2:CreateSubnetCidrReservation",
-                "ec2:CreateTags",
-                "ec2:CreateTransitGateway",
-                "ec2:CreateTransitGatewayPeeringAttachment",
-                "ec2:CreateTransitGatewayPrefixListReference",
-                "ec2:CreateTransitGatewayRoute",
-                "ec2:CreateTransitGatewayRouteTable",
-                "ec2:CreateTransitGatewayVpcAttachment",
-                "ec2:CreateVpc",
-                "ec2:CreateVpcEndpoint",
-                "ec2:CreateVpcEndpointConnectionNotification",
-                "ec2:CreateVpcEndpointServiceConfiguration",
-                "ec2:CreateVpnConnection",
-                "ec2:CreateVpnConnectionRoute",
-                "ec2:CreateVpnGateway",
-                "ec2:DeleteCustomerGateway",
-                "ec2:DeleteFlowLogs",
-                "ec2:DeleteInternetGateway",
-                "ec2:DeleteNetworkInterface",
-                "ec2:DeleteNetworkInterfacePermission",
-                "ec2:DeleteRoute",
-                "ec2:DeleteRouteTable",
-                "ec2:DeleteSecurityGroup",
-                "ec2:DeleteSubnet",
-                "ec2:DeleteSubnetCidrReservation",
-                "ec2:DeleteTags",
-                "ec2:DeleteTransitGateway",
-                "ec2:DeleteTransitGatewayPeeringAttachment",
-                "ec2:DeleteTransitGatewayPrefixListReference",
-                "ec2:DeleteTransitGatewayRoute",
-                "ec2:DeleteTransitGatewayRouteTable",
-                "ec2:DeleteTransitGatewayVpcAttachment",
-                "ec2:DeleteVpc",
-                "ec2:DeleteVpcEndpoints",
-                "ec2:DeleteVpcEndpointServiceConfigurations",
-                "ec2:DeleteVpnConnection",
-                "ec2:DeleteVpnConnectionRoute",
-                "ec2:Describe*",
-                "ec2:DetachInternetGateway",
-                "ec2:DisassociateAddress",
-                "ec2:DisassociateRouteTable",
-                "ec2:GetLaunchTemplateData",
-                "ec2:GetTransitGatewayAttachmentPropagations",
-                "ec2:ModifyInstanceAttribute",
-                "ec2:ModifySecurityGroupRules",
-                "ec2:ModifyTransitGatewayVpcAttachment",
-                "ec2:ModifyVpcAttribute",
-                "ec2:ModifyVpcEndpoint",
-                "ec2:ReleaseAddress",
-                "ec2:ReplaceRoute",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:RevokeSecurityGroupIngress",
-                "ec2:RunInstances",
-                "ec2:StartInstances",
-                "ec2:StopInstances",
-                "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
-                "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-                "iam:AddRoleToInstanceProfile",
-                "iam:AttachRolePolicy",
-                "iam:CreateInstanceProfile",
-                "iam:CreatePolicy",
-                "iam:CreateRole",
-                "iam:DeleteInstanceProfile",
-                "iam:DeletePolicy",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:GetInstanceProfile",
-                "iam:GetPolicy",
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:ListPolicyVersions",
-                "iam:ListRoles",
-                "iam:PassRole",
-                "iam:PutRolePolicy",
-                "iam:RemoveRoleFromInstanceProfile",
-                "lambda:CreateFunction",
-                "lambda:DeleteFunction",
-                "lambda:DeleteLayerVersion",
-                "lambda:GetFunction",
-                "lambda:GetLayerVersion",
-                "lambda:InvokeFunction",
-                "lambda:PublishLayerVersion",
-                "logs:CreateLogGroup",
-                "logs:DeleteLogGroup",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "route53:ChangeTagsForResource",
-                "route53:CreateHealthCheck",
-                "route53:CreateHostedZone",
-                "route53:CreateTrafficPolicy",
-                "route53:DeleteHostedZone",
-                "route53:DisassociateVPCFromHostedZone",
-                "route53:GetHostedZone",
-                "route53:ListHostedZones",
-                "route53domains:ListDomains",
-                "route53domains:ListOperations",
-                "route53domains:ListTagsForDomain",
-                "route53resolver:AssociateResolverEndpointIpAddress",
-                "route53resolver:AssociateResolverRule",
-                "route53resolver:CreateResolverEndpoint",
-                "route53resolver:CreateResolverRule",
-                "route53resolver:DeleteResolverEndpoint",
-                "route53resolver:DeleteResolverRule",
-                "route53resolver:DisassociateResolverEndpointIpAddress",
-                "route53resolver:DisassociateResolverRule",
-                "route53resolver:GetResolverEndpoint",
-                "route53resolver:GetResolverRule",
-                "route53resolver:ListResolverEndpointIpAddresses",
-                "route53resolver:ListResolverEndpoints",
-                "route53resolver:ListResolverRuleAssociations",
-                "route53resolver:ListResolverRules",
-                "route53resolver:ListTagsForResource",
-                "route53resolver:UpdateResolverEndpoint",
-                "route53resolver:UpdateResolverRule",
-                "s3:AbortMultipartUpload",
-                "s3:CreateBucket",
-                "s3:DeleteBucket",
-                "s3:DeleteObject",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:GetBucketAcl",
-                "s3:GetBucketOwnershipControls",
-                "s3:GetBucketPolicy",
-                "s3:GetBucketPolicyStatus",
-                "s3:GetBucketPublicAccessBlock",
-                "s3:GetObject",
-                "s3:GetObjectVersion",
-                "s3:GetBucketVersioning",
-                "s3:ListAccessPoints",
-                "s3:ListAccessPointsForObjectLambda",
-                "s3:ListAllMyBuckets",
-                "s3:ListBucket",
-                "s3:ListBucketMultipartUploads",
-                "s3:ListBucketVersions",
-                "s3:ListJobs",
-                "s3:ListMultipartUploadParts",
-                "s3:ListMultiRegionAccessPoints",
-                "s3:ListStorageLensConfigurations",
-                "s3:PutAccountPublicAccessBlock",
-                "s3:PutBucketAcl",
-                "s3:PutBucketPolicy",
-                "s3:PutBucketPublicAccessBlock",
-                "s3:PutObject",
-                "secretsmanager:CreateSecret",
-                "secretsmanager:DeleteSecret",
-                "secretsmanager:DescribeSecret",
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:ListSecrets",
-                "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:PutResourcePolicy",
-                "secretsmanager:TagResource",
-                "secretsmanager:UpdateSecret",
-                "sns:ListTopics",
-                "ssm:DescribeInstanceProperties",
-                "ssm:DescribeSessions",
-                "ssm:GetConnectionStatus",
-                "ssm:GetParameters",
-                "ssm:ListAssociations",
-                "ssm:ResumeSession",
-                "ssm:StartSession",
-                "ssm:TerminateSession"
-            ],
-            "Resource": "*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ElasticBeanstalkCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticbeanstalk:TerminateEnvironment",
+        "elasticbeanstalk:DeleteApplication",
+        "elasticbeanstalk:DeleteApplicationVersion",
+        "elasticbeanstalk:DeleteConfigurationTemplate"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2AndAutoScalingCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:TerminateInstances",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteSubnet",
+        "ec2:DeleteVpc",
+        "ec2:DeleteInternetGateway",
+        "ec2:DetachInternetGateway",
+        "ec2:DeleteNatGateway",
+        "ec2:DeleteRouteTable",
+        "ec2:DeleteRoute",
+        "ec2:DisassociateRouteTable",
+        "ec2:ReleaseAddress",
+        "ec2:DeleteVpcEndpoints",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeAddresses",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DescribeNetworkInterfaces",
+        "autoscaling:DeleteAutoScalingGroup",
+        "autoscaling:UpdateAutoScalingGroup",
+        "autoscaling:DeleteLaunchConfiguration",
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeLaunchConfigurations"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"
         }
-    ]
+      }
+    },
+    {
+      "Sid": "RDSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "rds:DeleteDBInstance",
+        "rds:DeleteDBProxy",
+        "rds:DeregisterDBProxyTargets",
+        "rds:DeleteDBSubnetGroup",
+        "rds:DescribeDBInstances",
+        "rds:DescribeDBProxies",
+        "rds:DescribeDBSubnetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ElastiCacheCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:DeleteReplicationGroup",
+        "elasticache:DeleteCacheSubnetGroup",
+        "elasticache:DescribeReplicationGroups",
+        "elasticache:DescribeCacheSubnetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:DeleteQueue",
+        "sqs:GetQueueUrl",
+        "sqs:ListQueues"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SNSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "sns:DeleteTopic",
+        "sns:ListTopics"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CognitoCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:DeleteUserPool",
+        "cognito-idp:DescribeUserPool"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3Cleanup",
+      "Effect": "Allow",
+      "Action": [
+        "s3:DeleteBucket",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:ListBucket",
+        "s3:ListBucketVersions",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "APIGatewayCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "apigateway:DELETE",
+        "apigateway:GET"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudFrontCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:DeleteDistribution",
+        "cloudfront:GetDistribution",
+        "cloudfront:UpdateDistribution"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodePipelineCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codepipeline:DeletePipeline",
+        "codepipeline:GetPipeline"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeBuildCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codebuild:DeleteProject",
+        "codebuild:BatchGetProjects"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeCommitCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:DeleteRepository",
+        "codecommit:GetRepository"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecretsManagerCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:DeleteSecret",
+        "secretsmanager:ListSecrets"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:DescribeAlarms",
+        "logs:DeleteLogGroup",
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DeleteInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:DetachRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:GetRole",
+        "iam:GetInstanceProfile"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ELBCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:DeleteLoadBalancer",
+        "elasticloadbalancing:DeleteTargetGroup",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "elasticloadbalancing:DescribeTargetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "KMSDescribe",
+      "Effect": "Allow",
+      "Action": [
+        "kms:DescribeKey",
+        "kms:ListKeys"
+      ],
+      "Resource": "arn:aws:kms:us-east-1:<your-account-id>:key/*"
+    }
+  ]
 }
-
 ```
 
-#### Provision resources using CloudFormation
+5. Click **Next**.
+6. Enter a name for the policy (e.g., `TicketAppCleanupPolicy`), add an optional description, and click **Create policy**.
+7. Attach this policy to your **IAM User** (navigate to **Users** -> select your User -> **Add permissions** -> **Attach policies directly** and select the `TicketAppCleanupPolicy` you just created).
 
-In this lab, we will use **N.Virginia region (us-east-1)**.
 
-To prepare the workshop environment, deploy this **CloudFormation Template** (click link): [PrivateLinkWorkshop ](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/reinvent-endpoints-builders-session/Nested.yaml&stackName=PLCloudSetup). Accept all of the defaults when deploying the template. 
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack1.png)
+---
 
-+ Tick 2 acknowledgement boxes
-+ Choose **Create stack**
+#### 2. Local Workspace Setup
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack2.png)
+Ensure your workstation has the following tools installed and configured:
 
-The **ClouddFormation** deployment requires about 15 minutes to complete.
+##### A. Node.js & npm
+*   The Ticket-App application is written in Node.js. You need Node.js version **18.x** or **20.x** (LTS).
+*   Verify your installation:
+    ```bash
+    node -v
+    npm -v
+    ```
 
-![complete](/images/5-Workshop/5.2-Prerequisite/complete.png)
+##### B. Git
+*   Used to fetch the project source code.
+*   Verify your installation:
+    ```bash
+    git --version
+    ```
 
-+ **2 VPCs** have been created
+---
 
-![vpcs](/images/5-Workshop/5.2-Prerequisite/vpcs.png)
+#### 3. Download Project Source Code
 
-+ **3 EC2s** have been created
+The Ticket-App source code is structured into three main directories:
+1.  **ticket-booking-frontend/**: Static React UI showing event list and handling ticket purchases.
+2.  **ticket-booking-backend/** (Backend API): Node.js API (Express) validating requests, authenticating users via Cognito, and publishing events to SQS.
+3.  **ticket-booking-worker/** (Worker): Background processor consuming messages from SQS FIFO and writing transactions to the PostgreSQL DB.
 
-![EC2](/images/5-Workshop/5.2-Prerequisite/ec2.png)
+Clone the project from your workshop repository:
+```bash
+git clone https://github.com/thinh2709/Project-FCAJ.git
+cd Project-FCAJ
+```
+
+
+
+---
+
+#### 4. Choose Infrastructure Deployment Method (VPC, RDS, Beanstalk, SQS,...)
+
+In this workshop, you can choose one of the following two methods to build your network and server infrastructure:
+
+*   **Option A (Recommended - Fast): Automate deployment using AWS CloudFormation**
+    *   The infrastructure will be automatically initialized.
+    *   Chapters **5.3 to 5.7** will serve as guides for you to **Verify and Validate** the created resources rather than recreating them.
+*   **Option B: Manually configure step-by-step (Manual)**
+    *   You will **skip** Step 4 (running CloudFormation) below.
+    *   Starting from Chapter **5.3**, you will manually follow the instructions on the AWS Console to build the system from scratch.
+
+---
+
+#### Instructions for Option A: Automatic Deployment using CloudFormation
+
+To prepare the environment for the workshop, we deploy the following CloudFormation template (click link): [TicketAppStack](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=ticket-app-stack&templateURL=https://fcaj-ticketing-templates.s3.amazonaws.com/template-cloudformation.yaml). Leave all default options.
+
+{{% notice info %}}
+**Note on Deployment Scope**: 
+If you choose automatic deployment via CloudFormation, the system will automatically initialize the basic resources. You can **skip the manual creation steps** and only read the instructions to **Verify/Check** configurations for the following parts:
+*   **Chapter 5.3 (Network & Security Infrastructure)**: 5.3.1 (Create VPC & Subnets), 5.3.2 (Configure Routing & NAT Gateways), and a part of 5.3.3 (Secrets Manager, 2 Security Groups `ticket-app-alb-sg` and `ticket-app-ec2-worker-sg`).
+*   **Chapter 5.4 (Frontend Tier)**: 5.4.1 (Create Amazon S3 Buckets).
+*   **Chapter 5.5 (Application & Messaging Tier)**: 5.5.1 (Configure SQS FIFO & DLQ), 5.5.2 (Deploy Beanstalk).
+*   **Chapter 5.7 (Authentication & API Gateway)**: 5.7.1 (Cognito User Pool).
+{{% /notice %}}
+
+1. The browser will open the CloudFormation Console with the configuration pre-filled.
+2. On the **Specify stack details** screen, verify the parameters and click **Next**.
+3. Scroll to the bottom of the Review page, check **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** and click **Submit** to start deployment.
+4. Wait for the deployment process to complete (Status changes to `CREATE_COMPLETE`).
+
+After the CloudFormation Stack deploys successfully, most of your basic infrastructure is ready! In the following chapters, if you choose **Option A**, you only need to read the instructions to **verify configurations** for automatically created resources, but you **must manually perform** the following configuration and deployment steps:
+
+*   **Section 5.3.3 (Security)**: Create the remaining 3 Security Groups (`ticket-app-rds-proxy-sg`, `ticket-app-rds-instance-sg`, `ticket-app-redis-sg`).
+*   **Section 5.4.2 (CloudFront)**: Configure CloudFront Distribution & WAF Security.
+*   **Section 5.4.3 (Deploy)**: Deploy Frontend code to S3.
+*   **Section 5.5.3 (SNS)**: SNS Notifications & DLQ Monitoring.
+*   **Section 5.5.4 (SES)**: Configure Amazon SES (Email) & SMTP Credentials.
+*   **Section 5.6.1 (RDS)**: Create RDS PostgreSQL Database & RDS Proxy.
+*   **Section 5.6.2 (Redis)**: Configure ElastiCache Redis.
+*   **Section 5.7.2 (ApiGateway)**: Create API Gateway & configure Cognito Authorizer, Routes, and CORS.
+*   **Chapter 5.8 (CI/CD)**: Create CodeCommit, CodeBuild, CodePipeline & push source code to trigger CI/CD.
+*   **Chapter 5.9 (Test)**: Test & Validate the system.

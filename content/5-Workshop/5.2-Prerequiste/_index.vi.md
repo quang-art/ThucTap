@@ -6,237 +6,338 @@ chapter : false
 pre : " <b> 5.2. </b> "
 ---
 
-#### IAM permissions
-Gắn IAM permission policy sau vào tài khoản aws user của bạn để triển khai và dọn dẹp tài nguyên trong workshop này.
-```
+### Các bước chuẩn bị (Prerequisites)
+
+Để hoàn thành bài thực hành workshop xây dựng ứng dụng đặt vé sự kiện **Ticket-App**, bạn cần chuẩn bị môi trường phát triển cục bộ và phân quyền tài khoản AWS tương ứng.
+
+---
+
+#### 1. Quyền hạn IAM (IAM Permissions)
+
+Bạn cần sử dụng một tài khoản IAM User hoặc IAM Role có các quyền hạn để dọn dẹp và vận hành các tài nguyên trong workshop. 
+
+{{% notice note %}}
+Để thực hành lab cá nhân một cách thuận tiện nhất và tránh lỗi phân quyền (Access Denied), chúng tôi khuyên bạn nên sử dụng quyền **AdministratorAccess** cho tài khoản thực hành của mình.
+{{% /notice %}}
+
+Nếu bạn muốn cấu hình chính sách phân quyền tối thiểu (Least Privilege), hãy làm theo các bước sau để tạo IAM Policy trên AWS Console:
+
+1. Đăng nhập vào **AWS Management Console** và tìm kiếm dịch vụ **IAM**.
+2. Chọn **Policies** ở thanh điều hướng bên trái và nhấn **Create policy**.
+3. Tại giao diện tạo policy, chuyển sang trình chỉnh sửa **JSON** (JSON editor), xóa hết mã mẫu cũ và dán đoạn chính sách JSON dưới đây vào:
+
+```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:*",
-                "cloudwatch:*",
-                "ec2:AcceptTransitGatewayPeeringAttachment",
-                "ec2:AcceptTransitGatewayVpcAttachment",
-                "ec2:AllocateAddress",
-                "ec2:AssociateAddress",
-                "ec2:AssociateIamInstanceProfile",
-                "ec2:AssociateRouteTable",
-                "ec2:AssociateSubnetCidrBlock",
-                "ec2:AssociateTransitGatewayRouteTable",
-                "ec2:AssociateVpcCidrBlock",
-                "ec2:AttachInternetGateway",
-                "ec2:AttachNetworkInterface",
-                "ec2:AttachVolume",
-                "ec2:AttachVpnGateway",
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:CreateClientVpnEndpoint",
-                "ec2:CreateClientVpnRoute",
-                "ec2:CreateCustomerGateway",
-                "ec2:CreateDhcpOptions",
-                "ec2:CreateFlowLogs",
-                "ec2:CreateInternetGateway",
-                "ec2:CreateLaunchTemplate",
-                "ec2:CreateNetworkAcl",
-                "ec2:CreateNetworkInterface",
-                "ec2:CreateNetworkInterfacePermission",
-                "ec2:CreateRoute",
-                "ec2:CreateRouteTable",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateSubnet",
-                "ec2:CreateSubnetCidrReservation",
-                "ec2:CreateTags",
-                "ec2:CreateTransitGateway",
-                "ec2:CreateTransitGatewayPeeringAttachment",
-                "ec2:CreateTransitGatewayPrefixListReference",
-                "ec2:CreateTransitGatewayRoute",
-                "ec2:CreateTransitGatewayRouteTable",
-                "ec2:CreateTransitGatewayVpcAttachment",
-                "ec2:CreateVpc",
-                "ec2:CreateVpcEndpoint",
-                "ec2:CreateVpcEndpointConnectionNotification",
-                "ec2:CreateVpcEndpointServiceConfiguration",
-                "ec2:CreateVpnConnection",
-                "ec2:CreateVpnConnectionRoute",
-                "ec2:CreateVpnGateway",
-                "ec2:DeleteCustomerGateway",
-                "ec2:DeleteFlowLogs",
-                "ec2:DeleteInternetGateway",
-                "ec2:DeleteNetworkInterface",
-                "ec2:DeleteNetworkInterfacePermission",
-                "ec2:DeleteRoute",
-                "ec2:DeleteRouteTable",
-                "ec2:DeleteSecurityGroup",
-                "ec2:DeleteSubnet",
-                "ec2:DeleteSubnetCidrReservation",
-                "ec2:DeleteTags",
-                "ec2:DeleteTransitGateway",
-                "ec2:DeleteTransitGatewayPeeringAttachment",
-                "ec2:DeleteTransitGatewayPrefixListReference",
-                "ec2:DeleteTransitGatewayRoute",
-                "ec2:DeleteTransitGatewayRouteTable",
-                "ec2:DeleteTransitGatewayVpcAttachment",
-                "ec2:DeleteVpc",
-                "ec2:DeleteVpcEndpoints",
-                "ec2:DeleteVpcEndpointServiceConfigurations",
-                "ec2:DeleteVpnConnection",
-                "ec2:DeleteVpnConnectionRoute",
-                "ec2:Describe*",
-                "ec2:DetachInternetGateway",
-                "ec2:DisassociateAddress",
-                "ec2:DisassociateRouteTable",
-                "ec2:GetLaunchTemplateData",
-                "ec2:GetTransitGatewayAttachmentPropagations",
-                "ec2:ModifyInstanceAttribute",
-                "ec2:ModifySecurityGroupRules",
-                "ec2:ModifyTransitGatewayVpcAttachment",
-                "ec2:ModifyVpcAttribute",
-                "ec2:ModifyVpcEndpoint",
-                "ec2:ReleaseAddress",
-                "ec2:ReplaceRoute",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:RevokeSecurityGroupIngress",
-                "ec2:RunInstances",
-                "ec2:StartInstances",
-                "ec2:StopInstances",
-                "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
-                "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-                "iam:AddRoleToInstanceProfile",
-                "iam:AttachRolePolicy",
-                "iam:CreateInstanceProfile",
-                "iam:CreatePolicy",
-                "iam:CreateRole",
-                "iam:DeleteInstanceProfile",
-                "iam:DeletePolicy",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:GetInstanceProfile",
-                "iam:GetPolicy",
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:ListPolicyVersions",
-                "iam:ListRoles",
-                "iam:PassRole",
-                "iam:PutRolePolicy",
-                "iam:RemoveRoleFromInstanceProfile",
-                "lambda:CreateFunction",
-                "lambda:DeleteFunction",
-                "lambda:DeleteLayerVersion",
-                "lambda:GetFunction",
-                "lambda:GetLayerVersion",
-                "lambda:InvokeFunction",
-                "lambda:PublishLayerVersion",
-                "logs:CreateLogGroup",
-                "logs:DeleteLogGroup",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "route53:ChangeTagsForResource",
-                "route53:CreateHealthCheck",
-                "route53:CreateHostedZone",
-                "route53:CreateTrafficPolicy",
-                "route53:DeleteHostedZone",
-                "route53:DisassociateVPCFromHostedZone",
-                "route53:GetHostedZone",
-                "route53:ListHostedZones",
-                "route53domains:ListDomains",
-                "route53domains:ListOperations",
-                "route53domains:ListTagsForDomain",
-                "route53resolver:AssociateResolverEndpointIpAddress",
-                "route53resolver:AssociateResolverRule",
-                "route53resolver:CreateResolverEndpoint",
-                "route53resolver:CreateResolverRule",
-                "route53resolver:DeleteResolverEndpoint",
-                "route53resolver:DeleteResolverRule",
-                "route53resolver:DisassociateResolverEndpointIpAddress",
-                "route53resolver:DisassociateResolverRule",
-                "route53resolver:GetResolverEndpoint",
-                "route53resolver:GetResolverRule",
-                "route53resolver:ListResolverEndpointIpAddresses",
-                "route53resolver:ListResolverEndpoints",
-                "route53resolver:ListResolverRuleAssociations",
-                "route53resolver:ListResolverRules",
-                "route53resolver:ListTagsForResource",
-                "route53resolver:UpdateResolverEndpoint",
-                "route53resolver:UpdateResolverRule",
-                "s3:AbortMultipartUpload",
-                "s3:CreateBucket",
-                "s3:DeleteBucket",
-                "s3:DeleteObject",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:GetBucketAcl",
-                "s3:GetBucketOwnershipControls",
-                "s3:GetBucketPolicy",
-                "s3:GetBucketPolicyStatus",
-                "s3:GetBucketPublicAccessBlock",
-                "s3:GetObject",
-                "s3:GetObjectVersion",
-                "s3:GetBucketVersioning",
-                "s3:ListAccessPoints",
-                "s3:ListAccessPointsForObjectLambda",
-                "s3:ListAllMyBuckets",
-                "s3:ListBucket",
-                "s3:ListBucketMultipartUploads",
-                "s3:ListBucketVersions",
-                "s3:ListJobs",
-                "s3:ListMultipartUploadParts",
-                "s3:ListMultiRegionAccessPoints",
-                "s3:ListStorageLensConfigurations",
-                "s3:PutAccountPublicAccessBlock",
-                "s3:PutBucketAcl",
-                "s3:PutBucketPolicy",
-                "s3:PutBucketPublicAccessBlock",
-                "s3:PutObject",
-                "secretsmanager:CreateSecret",
-                "secretsmanager:DeleteSecret",
-                "secretsmanager:DescribeSecret",
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:ListSecrets",
-                "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:PutResourcePolicy",
-                "secretsmanager:TagResource",
-                "secretsmanager:UpdateSecret",
-                "sns:ListTopics",
-                "ssm:DescribeInstanceProperties",
-                "ssm:DescribeSessions",
-                "ssm:GetConnectionStatus",
-                "ssm:GetParameters",
-                "ssm:ListAssociations",
-                "ssm:ResumeSession",
-                "ssm:StartSession",
-                "ssm:TerminateSession"
-            ],
-            "Resource": "*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ElasticBeanstalkCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticbeanstalk:TerminateEnvironment",
+        "elasticbeanstalk:DeleteApplication",
+        "elasticbeanstalk:DeleteApplicationVersion",
+        "elasticbeanstalk:DeleteConfigurationTemplate"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2AndAutoScalingCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:TerminateInstances",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteSubnet",
+        "ec2:DeleteVpc",
+        "ec2:DeleteInternetGateway",
+        "ec2:DetachInternetGateway",
+        "ec2:DeleteNatGateway",
+        "ec2:DeleteRouteTable",
+        "ec2:DeleteRoute",
+        "ec2:DisassociateRouteTable",
+        "ec2:ReleaseAddress",
+        "ec2:DeleteVpcEndpoints",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeAddresses",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DescribeNetworkInterfaces",
+        "autoscaling:DeleteAutoScalingGroup",
+        "autoscaling:UpdateAutoScalingGroup",
+        "autoscaling:DeleteLaunchConfiguration",
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeLaunchConfigurations"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"
         }
-    ]
+      }
+    },
+    {
+      "Sid": "RDSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "rds:DeleteDBInstance",
+        "rds:DeleteDBProxy",
+        "rds:DeregisterDBProxyTargets",
+        "rds:DeleteDBSubnetGroup",
+        "rds:DescribeDBInstances",
+        "rds:DescribeDBProxies",
+        "rds:DescribeDBSubnetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ElastiCacheCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:DeleteReplicationGroup",
+        "elasticache:DeleteCacheSubnetGroup",
+        "elasticache:DescribeReplicationGroups",
+        "elasticache:DescribeCacheSubnetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:DeleteQueue",
+        "sqs:GetQueueUrl",
+        "sqs:ListQueues"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SNSCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "sns:DeleteTopic",
+        "sns:ListTopics"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CognitoCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:DeleteUserPool",
+        "cognito-idp:DescribeUserPool"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3Cleanup",
+      "Effect": "Allow",
+      "Action": [
+        "s3:DeleteBucket",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:ListBucket",
+        "s3:ListBucketVersions",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "APIGatewayCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "apigateway:DELETE",
+        "apigateway:GET"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudFrontCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:DeleteDistribution",
+        "cloudfront:GetDistribution",
+        "cloudfront:UpdateDistribution"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodePipelineCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codepipeline:DeletePipeline",
+        "codepipeline:GetPipeline"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeBuildCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codebuild:DeleteProject",
+        "codebuild:BatchGetProjects"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeCommitCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:DeleteRepository",
+        "codecommit:GetRepository"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecretsManagerCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:DeleteSecret",
+        "secretsmanager:ListSecrets"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:DescribeAlarms",
+        "logs:DeleteLogGroup",
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DeleteInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:DetachRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:GetRole",
+        "iam:GetInstanceProfile"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ELBCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:DeleteLoadBalancer",
+        "elasticloadbalancing:DeleteTargetGroup",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "elasticloadbalancing:DescribeTargetGroups"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "KMSDescribe",
+      "Effect": "Allow",
+      "Action": [
+        "kms:DescribeKey",
+        "kms:ListKeys"
+      ],
+      "Resource": "arn:aws:kms:us-east-1:<your-account-id>:key/*"
+    }
+  ]
 }
-
 ```
 
-#### Khởi tạo tài nguyên bằng CloudFormation
+5. Nhấn **Next**.
+6. Nhập tên cho chính sách (ví dụ: `TicketAppCleanupPolicy`), thêm mô tả tùy chọn, và nhấn **Create policy**.
+7. Tiến hành gán chính sách này vào **IAM User** của bạn (truy cập menu **Users** -> chọn User của bạn -> **Add permissions** -> **Attach policies directly** và chọn chính sách `TicketAppCleanupPolicy` vừa tạo).
 
-Trong lab này, chúng ta sẽ dùng N.Virginia region (us-east-1).
 
-Để chuẩn bị cho môi trường làm workshop, chúng ta deploy CloudFormation template sau (click link): [PrivateLinkWorkshop ](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.us-east-1.amazonaws.com/reinvent-endpoints-builders-session/Nested.yaml&stackName=PLCloudSetup). Để nguyên các lựa chọn mặc định.
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack1.png)
+---
 
-+ Lựa chọn 2 mục acknowledgement 
-+ Chọn Create stack
+#### 2. Cài đặt môi trường phát triển cục bộ (Local Workspace Setup)
 
-![create stack](/images/5-Workshop/5.2-Prerequisite/create-stack2.png)
+Hãy đảm bảo máy trạm của bạn đã được cài đặt sẵn các công cụ sau:
 
-Quá trình triển khai CloudFormation cần khoảng 15 phút để hoàn thành.
+##### A. Node.js & npm
+*   Ứng dụng Ticket-App được viết bằng Node.js. Bạn cần cài đặt Node.js phiên bản **18.x** hoặc **20.x** (LTS).
+*   Kiểm tra cài đặt:
+    ```bash
+    node -v
+    npm -v
+    ```
 
-![complete](/images/5-Workshop/5.2-Prerequisite/complete.png)
+##### B. Git
+*   Sử dụng Git để tải mã nguồn dự án.
+*   Kiểm tra cài đặt:
+    ```bash
+    git --version
+    ```
 
-+ 2 VPCs đã được tạo
+---
 
-![vpcs](/images/5-Workshop/5.2-Prerequisite/vpcs.png)
+#### 3. Tải mã nguồn dự án (Project Source Code)
 
-+ 3 EC2s đã được tạo
+Mã nguồn của ứng dụng Ticket-App được chia làm 3 thư mục chính:
+1.  **ticket-booking-frontend/**: Giao diện React tĩnh hiển thị danh sách sự kiện và đặt vé.
+2.  **ticket-booking-backend/** (Backend API): Mã nguồn Node.js API (Express) xử lý tiếp nhận lượt booking, xác thực Cognito và đẩy tin nhắn vào SQS.
+3.  **ticket-booking-worker/** (Worker): Mã nguồn chạy tác vụ ngầm tiêu thụ SQS để ghi nhận thông tin đặt vé vào PostgreSQL DB.
 
-![EC2](/images/5-Workshop/5.2-Prerequisite/ec2.png)
+Hãy clone dự án từ repository workshop của bạn:
+```bash
+git clone https://github.com/thinh2709/Project-FCAJ.git
+cd Project-FCAJ
+```
+
+
+
+---
+
+#### 4. Lựa chọn Phương thức Triển khai Hạ tầng (VPC, RDS, Beanstalk, SQS,...)
+
+Trong workshop này, bạn có thể lựa chọn 1 trong 2 phương thức sau để xây dựng cơ sở hạ tầng mạng và máy chủ:
+
+*   **Lựa chọn A (Khuyên dùng - Nhanh chóng): Triển khai tự động bằng AWS CloudFormation**
+    *   Hạ tầng sẽ được khởi tạo hoàn toàn tự động.
+    *   Các chương từ **5.3 đến 5.7** sẽ đóng vai trò là hướng dẫn để bạn **Kiểm tra và Xác thực** cấu hình tài nguyên đã được tạo thay vì phải tự tạo lại.
+*   **Lựa chọn B: Tự tay cấu hình thủ công từng bước (Manual)**
+    *   Bạn sẽ **bỏ qua** bước 4 (chạy CloudFormation) dưới đây.
+    *   Bắt đầu từ chương **5.3**, bạn sẽ tự tay làm theo từng bước hướng dẫn trên AWS Console để tự xây dựng hệ thống từ con số 0.
+
+---
+
+#### Hướng dẫn cho Lựa chọn A: Triển khai tự động bằng CloudFormation
+
+Để chuẩn bị cho môi trường làm workshop, chúng ta deploy CloudFormation template sau (click link): [TicketAppStack](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=ticket-app-stack&templateURL=https://fcaj-ticketing-templates.s3.amazonaws.com/template-cloudformation.yaml). Để nguyên các lựa chọn mặc định.
+
+{{% notice info %}}
+**Lưu ý về phạm vi triển khai**: 
+Nếu chọn triển khai tự động bằng CloudFormation, hệ thống sẽ tự động khởi tạo sẵn các tài nguyên cơ bản. Bạn có thể **bỏ qua bước tạo thủ công** và chỉ cần đọc hướng dẫn để **Kiểm tra/Xác minh** cấu hình đối với các phần sau:
+*   **Chương 5.3 (Hạ tầng Mạng & Bảo mật)**: 5.3.1 (Khởi tạo VPC & Subnets), 5.3.2 (Định tuyến & NAT Gateways), và một phần của 5.3.3 (Secrets Manager, 2 Security Groups `ticket-app-alb-sg` và `ticket-app-ec2-worker-sg`).
+*   **Chương 5.4 (Tầng Giao diện)**: 5.4.1 (Khởi tạo Amazon S3 Buckets).
+*   **Chương 5.5 (Tầng Application & Messaging)**: 5.5.1 (Cấu hình SQS FIFO & DLQ), 5.5.2 (Triển khai Beanstalk).
+*   **Chương 5.7 (Xác thực & Cổng API)**: 5.7.1 (Cognito User Pool).
+{{% /notice %}}
+
+1. Trình duyệt sẽ mở bảng điều khiển CloudFormation Console và tự động điền sẵn các cấu hình.
+2. Tại màn hình **Specify stack details**, kiểm tra các tham số rồi click **Next**.
+3. Cuộn xuống cuối trang Review, tích chọn **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** và click **Submit** để bắt đầu triển khai.
+4. Đợi cho đến khi quá trình khởi tạo hoàn tất (Trạng thái chuyển sang `CREATE_COMPLETE`).
+
+Sau khi CloudFormation Stack triển khai thành công, phần lớn hạ tầng cơ bản của bạn đã hoàn tất! Ở các chương tiếp theo, nếu đi theo **Lựa chọn A**, bạn chỉ cần đọc hướng dẫn để **xác minh cấu hình** đối với các phần đã được tạo tự động, đồng thời **bắt buộc phải tự tay thực hiện** các bước cấu hình và triển khai sau:
+
+*   **Bài 5.3.3 (Bảo mật)**: Tạo 3 Security Groups còn lại (`ticket-app-rds-proxy-sg`, `ticket-app-rds-instance-sg`, `ticket-app-redis-sg`).
+*   **Bài 5.4.2 (CloudFront)**: Cấu hình CloudFront Distribution & Bảo mật WAF.
+*   **Bài 5.4.3 (Deploy)**: Triển khai code Frontend lên S3.
+*   **Bài 5.5.3 (SNS)**: Thông báo SNS & Giám sát DLQ.
+*   **Bài 5.5.4 (SES)**: Cấu hình Amazon SES (Email) & SMTP Credentials.
+*   **Bài 5.6.1 (RDS)**: Tạo Database RDS PostgreSQL & RDS Proxy.
+*   **Bài 5.6.2 (Redis)**: Cấu hình ElastiCache Redis.
+*   **Bài 5.7.2 (ApiGateway)**: Tạo API Gateway & cấu hình Cognito Authorizer, Routes, CORS.
+*   **Chương 5.8 (CI/CD)**: Tạo CodeCommit, CodeBuild, CodePipeline & đẩy mã nguồn để kích hoạt CI/CD.
+*   **Chương 5.9 (Test)**: Kiểm thử & Xác thực hệ thống.

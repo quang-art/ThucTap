@@ -30,7 +30,7 @@ chapter: false
 
 &emsp; **Internship Duration:** From 20/04/2026 to 12/07/2026
 
-![Your profile picture](/images/anhthe.jpg)
+<img src="/images/anhthe.jpg" alt="Your profile picture" style="max-width: 180px; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 15px;">
 
 ### Report Content
 
