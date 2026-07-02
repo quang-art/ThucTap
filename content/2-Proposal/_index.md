@@ -5,111 +5,185 @@ weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-In this section, you need to summarize the contents of the workshop that you **plan** to conduct.
-
-# IoT Weather Platform for Lab Research
-## A Unified AWS Serverless Solution for Real-Time Weather Monitoring
+# Online Event Ticketing Platform
+## High-Availability AWS 3-Tier Solution for Real-Time Event Booking
 
 ### 1. Executive Summary
-The IoT Weather Platform is designed for the ITea Lab team in Ho Chi Minh City to enhance weather data collection and analysis. It supports up to 5 weather stations, with potential scalability to 10-15, utilizing Raspberry Pi edge devices with ESP32 sensors to transmit data via MQTT. The platform leverages AWS Serverless services to deliver real-time monitoring, predictive analytics, and cost efficiency, with access restricted to 5 lab members via Amazon Cognito.
+**Ticketing-App** is a multi-event web application platform designed to handle online ticket reservations for various events (e.g., live concerts, sports). The system is specifically engineered to resolve network bottlenecks and database overload by utilizing an asynchronous decoupled processing mechanism and message queuing on AWS.
 
-### 2. Problem Statement
-### What’s the Problem?
-Current weather stations require manual data collection, becoming unmanageable with multiple units. There is no centralized system for real-time data or analytics, and third-party platforms are costly and overly complex.
+---
 
-### The Solution
-The platform uses AWS IoT Core to ingest MQTT data, AWS Lambda and API Gateway for processing, Amazon S3 for storage (including a data lake), and AWS Glue Crawlers and ETL jobs to extract, transform, and load data from the S3 data lake to another S3 bucket for analysis. AWS Amplify with Next.js provides the web interface, and Amazon Cognito ensures secure access. Similar to Thingsboard and CoreIoT, users can register new devices and manage connections, though this platform operates on a smaller scale and is designed for private use. Key features include real-time dashboards, trend analysis, and low operational costs.
+### 2. Concept & Objectives (Problem Statement)
 
-### Benefits and Return on Investment
-The solution establishes a foundational resource for lab members to develop a larger IoT platform, serving as a study resource, and provides a data foundation for AI enthusiasts for model training or analysis. It reduces manual reporting for each station via a centralized platform, simplifying management and maintenance, and improves data reliability. Monthly costs are $0.66 USD per the AWS Pricing Calculator, with a 12-month total of $7.92 USD. All IoT equipment costs are covered by the existing weather station setup, eliminating additional development expenses. The break-even period of 6-12 months is achieved through significant time savings from reduced manual work.
+#### 2.1 Context & Problem
+*   **System Purpose:**
+    **Ticketing-App** is a dedicated online event ticketing platform designed specifically to handle high concurrency and traffic spikes during time-limited ticket releases ("flash sale" events).
+*   **Target Audience:**
+    The platform serves two primary groups: end-users (ticket buyers) who demand a seamless and lag-free booking experience, and event organizers (B2B clients) who require a highly stable, crash-free system to protect their brand reputation.
+*   **Problem Statement:**
+    Traditional ticketing platforms frequently suffer from server crashes or database connection exhaustion when thousands of users attempt to purchase tickets simultaneously. **Ticketing-App** resolves this bottleneck through a decoupled architecture integrated with message queues, ensuring that no booking requests are dropped or lost.
+
+
+#### 2.2 Specific Goals
+*   **Desired Output:** 
+    * A fully automated 3-tier cloud infrastructure.
+    * A comprehensive Monitoring system: CloudWatch Dashboards, centralized Logs, and automated Alerts/Alarms sent via email/SNS.
+    * A detailed end-to-end Workshop deployment guide.
+*   **Success Criteria:** 
+    * API Response Time remains under 200ms under heavy load.
+    * Data integrity is guaranteed: No lost booking messages, and zero double-bookings thanks to SQS FIFO.
+    * The system scales precisely (Auto Scaling) when load is simulated.
+
+#### 2.3 Program Alignment
+*   **FCAJ / AWS Use-case:** 
+    The project accurately simulates the high-load challenges of real-world e-commerce systems, directly applying the core AWS services (Elastic Beanstalk, RDS Multi-AZ, SQS, ElastiCache, CloudFront) taught in the First Cloud AI Journey (FCAJ) program.
+*   **Cloud Focus:** 
+    The solution deeply focuses on High Availability, Security, and Scalability—the core philosophies of cloud computing, perfectly aligning with cloud infrastructure evaluation criteria.
+*   **Proposed Solution:**
+    Implement a decoupled architecture on AWS:
+    1.  **Frontend:** Hosted on **Amazon S3 Static Website Hosting** for cost efficiency and crash-resistant page loading.
+    2.  **API Gateway & Application Load Balancer (ALB):** Routes and balances incoming traffic to Backend API instances.
+    3.  **Backend Tier (Elastic Beanstalk):** Receives booking requests, performs rapid preliminary validations, immediately publishes messages to **SQS FIFO**, and returns a "Pending" response to the client.
+    4.  **Worker Tier (Elastic Beanstalk Worker):** Consumes messages from the SQS FIFO queue in exact order, processes bookings, and updates the database.
+    5.  **Database & Caching:** Utilizes **RDS Proxy** for connection pooling to shield RDS PostgreSQL, while **ElastiCache Redis** caches user sessions and event information to offload read queries from the database.
+    6.  **Auth & Notifications:** Integrates **Cognito** for managed user authentication, and uses **SNS + SES** to trigger automated alerts and ticket confirmation emails.
+*   **Benefits and ROI (Return on Investment):**
+    *   **Resource & Cost Optimization:** Auto Scaling configurations run a minimum of 2 instances and scale up to 4 during high-traffic ticket sales, eliminating paid idle resources.
+    *   **High Reliability:** The SQS FIFO mechanism ensures zero double-bookings. RDS Multi-AZ and Redis replicas provide rapid failover without service disruption.
+    *   **Strong Security:** Application servers, databases, and cache clusters are isolated in Private Subnets, accessible only through NAT Gateways and ALBs.
+
+---
 
 ### 3. Solution Architecture
-The platform employs a serverless AWS architecture to manage data from 5 Raspberry Pi-based stations, scalable to 15. Data is ingested via AWS IoT Core, stored in an S3 data lake, and processed by AWS Glue Crawlers and ETL jobs to transform and load it into another S3 bucket for analysis. Lambda and API Gateway handle additional processing, while Amplify with Next.js hosts the dashboard, secured by Cognito. The architecture is detailed below:
 
-![IoT Weather Station Architecture](/images/2-Proposal/edge_architecture.jpeg)
+The system is deployed in a custom VPC with isolated Public and Private subnets across multiple Availability Zones.
 
-![IoT Weather Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
+#### 3.1 Architecture Diagram
 
-### AWS Services Used
-- **AWS IoT Core**: Ingests MQTT data from 5 stations, scalable to 15.
-- **AWS Lambda**: Processes data and triggers Glue jobs (two functions).
-- **Amazon API Gateway**: Facilitates web app communication.
-- **Amazon S3**: Stores raw data in a data lake and processed outputs (two buckets).
-- **AWS Glue**: Crawlers catalog data, and ETL jobs transform and load it.
-- **AWS Amplify**: Hosts the Next.js web interface.
-- **Amazon Cognito**: Secures access for lab users.
+![System Architecture](/images/2-Proposal/ticket_app_architecture.png)
 
-### Component Design
-- **Edge Devices**: Raspberry Pi collects and filters sensor data, sending it to IoT Core.
-- **Data Ingestion**: AWS IoT Core receives MQTT messages from the edge devices.
-- **Data Storage**: Raw data is stored in an S3 data lake; processed data is stored in another S3 bucket.
-- **Data Processing**: AWS Glue Crawlers catalog the data, and ETL jobs transform it for analysis.
-- **Web Interface**: AWS Amplify hosts a Next.js app for real-time dashboards and analytics.
-- **User Management**: Amazon Cognito manages user access, allowing up to 5 active accounts.
+
+#### 3.2 AWS Services Details
+
+| Category | AWS Service | Selection Rationale & Configuration |
+| :--- | :--- | :--- |
+| **Compute** | Elastic Beanstalk | Deploys and manages two isolated environments: Backend API and SQS processing Worker. |
+| **Compute** | EC2 Instances | Runs Amazon Linux 2023, Node.js 24 runtime, utilizing `t3.micro` instance types. |
+| **Compute** | Auto Scaling Group | Scales between a minimum of 2 and a maximum of 4 instances. Scale-out is triggered when average CPU utilization exceeds 70% for 3 minutes (for Backend API) or when SQS message backlog increases (for Worker). |
+| **Frontend** | Amazon S3 | Serves the HTML, CSS, and JS assets using S3 Static Website Hosting for cost-effective content delivery. |
+| **Database** | RDS PostgreSQL | Runs PostgreSQL version 18.3, instance class `db.t3.small`, 20GB gp3 storage, KMS-encrypted, configured with Multi-AZ for failover. |
+| **Database Proxy**| RDS Proxy | Performs connection pooling to handle connections efficiently and protect the database database instance. |
+| **Cache** | ElastiCache Redis | 2-node cluster of `cache.t3.micro` instances (1 Primary, 1 Replica) running Redis 7.0.7 for session store and event data caching. |
+| **Messaging** | SQS FIFO | Managed queues: `booking-queue.fifo` for processing purchases sequentially, with `checkout-dlq.fifo` (Dead Letter Queue) to capture exceptions. |
+| **Email & Alerts** | SNS & SES | **SES** delivers electronic tickets. **SNS** sends operational alerts and infrastructure notifications to administrators. |
+| **Security** | IAM, Secrets Manager, KMS | **IAM Roles** configured with Least Privilege principle, no hard-coded access keys. Restricted public access via Private Subnets. **Cognito** for identities; **KMS** for data encryption. |
+| **CI/CD** | CodePipeline, CodeBuild, CodeCommit | Automates software deployment from commit to production. |
+| **Monitoring** | CloudWatch | Collects logs, gathers infrastructure metrics, and runs alarms. |
+
+---
 
 ### 4. Technical Implementation
-**Implementation Phases**
-This project has two parts—setting up weather edge stations and building the weather platform—each following 4 phases:
-- Build Theory and Draw Architecture: Research Raspberry Pi setup with ESP32 sensors and design the AWS serverless architecture (1 month pre-internship)
-- Calculate Price and Check Practicality: Use AWS Pricing Calculator to estimate costs and adjust if needed (Month 1).
-- Fix Architecture for Cost or Solution Fit: Tweak the design (e.g., optimize Lambda with Next.js) to stay cost-effective and usable (Month 2).
-- Develop, Test, and Deploy: Code the Raspberry Pi setup, AWS services with CDK/SDK, and Next.js app, then test and release to production (Months 2-3).
 
-**Technical Requirements**
-- Weather Edge Station: Sensors (temperature, humidity, rainfall, wind speed), a microcontroller (ESP32), and a Raspberry Pi as the edge device. Raspberry Pi runs Raspbian, handles Docker for filtering, and sends 1 MB/day per station via MQTT over Wi-Fi.
-- Weather Platform: Practical knowledge of AWS Amplify (hosting Next.js), Lambda (minimal use due to Next.js), AWS Glue (ETL), S3 (two buckets), IoT Core (gateway and rules), and Cognito (5 users). Use AWS CDK/SDK to code interactions (e.g., IoT Core rules to S3). Next.js reduces Lambda workload for the fullstack web app.
+#### Implementation Phases
+The project is divided into 2 specific phases over a 2-week period:
+1.  **Network Setup, Security & Database Provisioning (Week 1):** Provision the custom VPC, subnets across 2 Availability Zones, NAT Gateways, and Security Group Chaining. Deploy RDS PostgreSQL Multi-AZ with RDS Proxy, ElastiCache Redis cluster, SQS FIFO queues (Booking & DLQ), and Cognito User Pool.
+2.  **App Integration, Deployment & Monitoring Automation (Week 2):** Deploy Backend API and Worker applications to Elastic Beanstalk, configure environment variables for DB/Redis/SQS connections, and set up Amazon S3 static web hosting. Construct CodePipeline CI/CD and configure 10 CloudWatch Alarms with SNS notifications.
+
+#### Prerequisites
+*   **Resources & Tools:** AWS Account with specific Administrator privileges for the services used, configured AWS CLI, Node.js 24.x, and Git.
+*   **Basic Knowledge:** VPC Networking (Subnets, NAT Gateway, Security Groups), Elastic Beanstalk, RDS PostgreSQL, SQS/SNS, and IAM Roles & Policies.
+
+
+---
 
 ### 5. Timeline & Milestones
-**Project Timeline**
-- Pre-Internship (Month 0): 1 month for planning and old station review.
-- Internship (Months 1-3): 3 months.
-    - Month 1: Study AWS and upgrade hardware.
-    - Month 2: Design and adjust architecture.
-    - Month 3: Implement, test, and launch.
-- Post-Launch: Up to 1 year for research.
+*   **Week 1: Core Infrastructure, Database & Messaging Setup**
+    *   Deploy VPC, subnets, route tables, and security groups.
+    *   Deploy RDS PostgreSQL, RDS Proxy, and ElastiCache Redis.
+    *   Configure SQS FIFO queues (Booking & DLQ) and Cognito User Pool.
+    *   Validate secure connectivity within the private subnets.
+*   **Week 2: Application Deployment, CI/CD Pipeline & Delivery**
+    *   Develop API queue ingestion logic (Backend) and queue consumer logic (Worker).
+    *   Deploy Backend and Worker codebases to Elastic Beanstalk, configure S3 Static Frontend.
+    *   Automate deployment processes using CodePipeline.
+    *   Establish CloudWatch Logs and trigger 10 alarms.
+    *   Perform load tests and clean up test resources.
+
+---
 
 ### 6. Budget Estimation
-You can find the budget estimation on the [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=621f38b12a1ef026842ba2ddfe46ff936ed4ab01).  
-Or you can download the [Budget Estimation File](../attachments/budget_estimation.pdf).
+This estimate is based on the [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=55c11e259b0f9e28ba8a407449988fd53d95b250) configured for the Ticket-App.
 
-### Infrastructure Costs
-- AWS Services:
-    - AWS Lambda: $0.00/month (1,000 requests, 512 MB storage).
-    - S3 Standard: $0.15/month (6 GB, 2,100 requests, 1 GB scanned).
-    - Data Transfer: $0.02/month (1 GB inbound, 1 GB outbound).
-    - AWS Amplify: $0.35/month (256 MB, 500 ms requests).
-    - Amazon API Gateway: $0.01/month (2,000 requests).
-    - AWS Glue ETL Jobs: $0.02/month (2 DPUs).
-    - AWS Glue Crawlers: $0.07/month (1 crawler).
-    - MQTT (IoT Core): $0.08/month (5 devices, 45,000 messages).
+#### Infrastructure Costs (Staging/Production Environment)
 
-Total: $0.7/month, $8.40/12 months
+| No. | AWS Service | Configuration Details | Monthly Cost |
+| :--- | :--- | :--- | :--- |
+| 1 | Elastic Beanstalk (EC2 + ALB) | 4 instances `t3.micro`, 2 Application Load Balancers | ~ $55.15 |
+| 2 | RDS PostgreSQL | `db.t3.small` Multi-AZ, 20GB gp3 (Utilization 30%) | ~ $60.52 |
+| 3 | ElastiCache Redis | 2-node cluster of `cache.t3.micro` | ~ $24.82 |
+| 4 | NAT Gateways | 2 NAT Gateways operating across 2 Availability Zones | ~ $66.15 |
+| 5 | S3 & CloudFront | 20GB Standard Storage, CloudFront Free Tier | ~ $0.53 |
+| 6 | API Gateway | 1 million requests/month | ~ $1.00 |
+| 7 | AWS Cognito | Free tier up to 10,000 Monthly Active Users (MAUs) | $0.00 |
+| 8 | CI/CD (CodePipeline & CodeBuild) | 2 pipelines, 1 build/month | ~ $3.50 |
+| 9 | CloudWatch & Secrets Manager & SES | Log storage, 1 secret, 5000 emails/month | ~ $5.99 |
+| **Total** | **Estimated Monthly Total** | | **~ $217.67** |
 
-- Hardware: $265 one-time (Raspberry Pi 5 and sensors).
+*Note:* The cloud infrastructure cost can be trimmed to **under $100.00/month** in development environments by:
+*   Removing NAT Gateways and keeping resources in Public Subnets (saves ~$66.15/month), or running only 1 NAT Gateway instead of 2 (saves ~$33.00/month).
+*   Switching RDS to Single-AZ instead of Multi-AZ (saves ~$30.00/month).
+*   Reducing EC2 instances to 1 per tier and running Redis as a single node when load testing is not active (saves ~$28.00/month).
+
+---
 
 ### 7. Risk Assessment
+
 #### Risk Matrix
-- Network Outages: Medium impact, medium probability.
-- Sensor Failures: High impact, low probability.
-- Cost Overruns: Medium impact, low probability.
 
-#### Mitigation Strategies
-- Network: Local storage on Raspberry Pi with Docker.
-- Sensors: Regular checks and spares.
-- Cost: AWS budget alerts and optimization.
+| Identified Risk | Probability | Impact | Mitigation Strategy |
+| :--- | :--- | :--- | :--- |
+| **Database Connection Pool Exhaustion** | Medium | High | Utilize **RDS Proxy** connection pooling and implement ElastiCache Redis read caching. |
+| **Lost or Out-of-Order Bookings** | Low | High | Use **SQS FIFO** (exactly-once processing) and redirect transaction failures to a **Dead Letter Queue (DLQ)**. |
+| **Cloud Cost Spikes** | Medium | Medium | Configure **CloudWatch Budget Alarms** at 80% and 100% thresholds. Enforce ASG limits. |
+| **Unauthorized Access / Breaches** | Low | High | Enforce security group chaining, keep application servers and databases in Private Subnets, and encrypt data at rest via KMS. |
 
-#### Contingency Plans
-- Revert to manual methods if AWS fails.
-- Use CloudFormation for cost-related rollbacks.
+#### Contingency Plan
+*   **Disaster Recovery:** Utilize RDS Automated Backups and Snapshots to perform Point-in-Time Recovery (PITR), ensuring no loss of critical booking data in the event of a major data or infrastructure failure.
+*   **Failed Booking Re-processing:** If order processing fails at the Worker tier, it lands in the DLQ. Admin notifications are dispatched via SNS, and script utilities can re-ingest the message after the database state is resolved.
 
-### 8. Expected Outcomes
-#### Technical Improvements: 
-Real-time data and analytics replace manual processes.  
-Scalable to 10-15 stations.
-#### Long-term Value
-1-year data foundation for AI research.  
-Reusable for future projects.
+---
+
+### 8. System Processing Flows & Technical Strengths
+
+The system utilizes an **Event-Driven Microservices** architecture to decouple user-facing operations from background tasks. The core workflows and architectural characteristics include:
+
+#### 8.1 Core Processing Flows
+
+*   **Authentication Flow:** 
+    Integrated with Amazon Cognito for identity management. API requests are authenticated using JWT validation middleware (`aws-jwt-verify`), ensuring secure and stateless authorization between the client and backend services.
+*   **Virtual Waiting Room & Concurrency Control:** 
+    To handle high concurrency during ticket sales, a virtual waiting room is implemented using **ElastiCache Redis**. When processing a booking, the system applies a distributed locking mechanism on Redis to reserve tickets temporarily, mitigating race conditions and preventing overselling.
+*   **Asynchronous Background Processing:** 
+    Using **Amazon SQS FIFO**, resource-intensive tasks are offloaded from the main API. Operations such as payment webhooks (MoMo IPN), e-ticket generation, and SES/SNS notifications are processed asynchronously by backend Workers. This ensures the primary API remains highly responsive.
+*   **Reservation Lifecycle & Automated Cleanup:** 
+    Reservations are granted a limited time window. If a payment is not completed or the user cancels, a `RESERVATION_EXPIRED` event is queued in SQS. The Worker tier consumes this event and performs a transactional database rollback (updating the booking status to 'cancelled' and releasing ticket rows). Simultaneously, it dynamically increments the available ticket inventory in Redis and removes the distributed locks. This automated cleanup ensures unpurchased tickets are rapidly made available to other users in the virtual queue, maximizing inventory utilization.
+
+#### 8.2 Architectural Strengths
+
+*   **Scalability and Decoupling:** 
+    The Frontend, Backend API, and Worker tiers operate independently, allowing targeted auto-scaling based on the distinct load of each tier. The Backend API scales based on CPU utilization (scale-out when average CPU exceeds 70%), while the Worker tier scales based on SQS queue length (Message Backlog). SQS acts as a buffer to handle traffic spikes without overloading the PostgreSQL database.
+*   **Data Consistency:** 
+    The combination of Redis distributed locks and SQS FIFO (exactly-once processing) guarantees strict data consistency across ticket reservations and payment processing, routing any failures to a Dead Letter Queue (DLQ) for debugging.
+*   **Modern Frontend Stack:** 
+    Built with Next.js, the frontend provides Server-Side Rendering (SSR) capabilities and leverages React Query for optimized data fetching and state management, ensuring a robust user experience under heavy load.
+
+---
+
+### 9. Expected Outcomes
+*   **Technical Improvements:**
+    *   Responsive API endpoints with response times below 200ms by offloading heavy work to background workers.
+    *   No application downtime or double-bookings during ticket spikes.
+*   **Long-Term Value:**
+    *   Creates a reusable, production-ready, high-availability AWS 3-tier architecture template for transactional e-commerce workloads.
+    *   CI/CD pipelines reduce deployment errors, raising overall code quality and release agility.
