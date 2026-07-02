@@ -1,7 +1,8 @@
 {{- $url := .Destination -}}
-{{- if and (strings.HasPrefix $url "/") (not (strings.HasPrefix $url "//")) -}}
+{{- $resource := .Page.Resources.GetMatch .Destination -}}
+{{- if $resource -}}
+  {{- $url = $resource.RelPermalink -}}
+{{- else if and (strings.HasPrefix $url "/") (not (strings.HasPrefix $url "//")) -}}
   {{- $url = strings.TrimPrefix "/" $url | relURL -}}
-{{- else -}}
-  {{- $url = $url | relURL -}}
 {{- end -}}
 <img src="{{ $url }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}"{{ end }} />
