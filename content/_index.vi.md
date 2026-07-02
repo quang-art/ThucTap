@@ -25,7 +25,7 @@ chapter: false
 
 &emsp; **Thời gian thực tập:** Từ ngày 20/04/2025 đến ngày 12/07/2025
 
-<img src="/images/anhthe.jpg" alt="Your profile picture" style="max-width: 180px; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 15px; margin-bottom: 15px;">
+{{< profile-img >}}
 
 
 
