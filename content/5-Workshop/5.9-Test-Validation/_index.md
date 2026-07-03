@@ -21,8 +21,8 @@ In this lab, we will perform end-to-end testing following both the user flow and
 *   **Step 2:** Select the `booking-queue.fifo` queue.
 *   **Step 3:** Switch to the **Monitoring** tab.
 *   **Expected Result:** You will see the **Number Of Messages Sent** metric spike corresponding to the number of booking requests. If the Worker is functioning correctly, the **Number Of Messages Deleted** will also increase shortly after (indicating the Worker consumed the messages).
-![SQS Metrics 2](/images/5-Workshop/5.9-Test-Validation/sqs_2.png)
 ![SQS Metrics 1](/images/5-Workshop/5.9-Test-Validation/sqs_1.png)
+![SQS Metrics 2](/images/5-Workshop/5.9-Test-Validation/sqs_2.png)
 
 ---
 

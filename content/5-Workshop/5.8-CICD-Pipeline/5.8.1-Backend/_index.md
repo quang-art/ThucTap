@@ -17,9 +17,6 @@ We will set up an integration and deployment automation pipeline for the **Backe
 Before interacting with CodeCommit, you need to initialize HTTPS Git credentials or security keys for your IAM User:
 
 1. Open the [AWS IAM console](https://us-east-1.console.aws.amazon.com/iam/home#/users).
-   
-   ![IAM Search](/images/5-Workshop/5.8-CICD-Pipeline/iam_search.png)
-
 2. Click your IAM User -> Select the **Security credentials** tab.
    
    ![IAM Security Credentials Access Key](/images/5-Workshop/5.8-CICD-Pipeline/iam_user_access_key.png)
