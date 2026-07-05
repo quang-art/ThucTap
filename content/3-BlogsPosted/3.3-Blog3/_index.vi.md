@@ -68,7 +68,7 @@ Giải pháp Multi-Build trên Amazon GameLift Servers là công cụ vô cùng 
 
 # Hình ảnh
 ![alt text](image-1.png)
-![alt text](image-2.png)
+![alt text](image.png)
 
 # Link tài liệu tham khảo:
 https://aws.amazon.com/vi/blogs/gametech/rapid-game-server-iteration-on-amazon-gamelift-servers/
