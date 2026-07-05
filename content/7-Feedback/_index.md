@@ -13,28 +13,28 @@ pre: " <b> 7. </b> "
 ### Overall Evaluation
 
 **1. Working Environment**  
-The workplace culture here is incredibly warm and dynamic. Throughout the program, whenever I faced technical blockers, the FCAJ community generously offered guidance, even during late hours. The neat and spacious office layout significantly boosted my productivity. It would be amazing if we could have more social events to encourage bonding among everyone.
+The working atmosphere in the program is extremely dynamic, friendly, and filled with positive energy. Throughout the internship, whenever I encountered technical glitches, I received dedicated guidance from everyone, regardless of the time. The learning and working space is organized, tidy, and spacious, creating the best conditions to optimize performance. A minor suggestion is that the organizers could design more short networking/ice-breaking activities to help members bond and understand each other better.
 
 **2. Support from Team Admin**  
-The admin team closely supported me during project development and provided an extensive repository of materials. For complex system design challenges, they always created space for interns to explore. I highly valued their quick responses and their approach of offering directional hints to stimulate my problem-solving skills rather than giving out direct answers.
+The admin team accompanied us extremely closely, providing a rich roadmap of materials and clear direction for my project. For complex system design tasks, they always created an open space for interns to freely discuss. I deeply value the fast feedback, especially the way they guided us to develop our own problem-solving thinking rather than just giving ready-made answers.
 
 **3. Relevance of Training Program to Academic Major**  
-This training aligns perfectly with my academic studies in Information Technology. Beyond consolidating fundamental theories of databases and communication networks, it gave me hands-on practice with AWS infrastructure—a practical experience that university lectures rarely cover in such depth.
+The internship program is designed to align very closely with and support my major in Information Technology. Besides systematizing foundational theories of databases and communication networks, I had a valuable opportunity to work directly with AWS infrastructure. These are highly valuable hands-on experiences that university lectures cannot convey in such detail.
 
 **4. Learning & Skill Development Opportunities**  
-It was a fantastic opportunity to grow by getting familiar with project management methodologies, practicing collaborative team dynamics, and adopting a professional business style. Moreover, the industry experiences shared by guest speakers helped me map out a clearer career roadmap.
+This is an excellent launchpad that helped me grow significantly. I was not only able to get familiar with modern project management tools and practice teamwork skills, but I also formed a professional working attitude. In particular, real-life lessons from experienced experts helped me clearly define my future career path.
 
 **5. Company Culture & Team Spirit**  
-The collective learning atmosphere is very proactive and friendly, built on mutual respect and helpfulness among all interns. Especially during final project sprints or when tackling difficult system bottlenecks, the lively exchange of knowledge within the team drove my learning curve upwards every day.
+The shared learning environment is highly constructive and very friendly, where interns always proactively support and respect each other. Especially during the final project sprint or when dealing with tough technical challenges, the enthusiastic knowledge sharing helped me make clear progress day by day.
 
 **6. Internship Policies / Benefits**  
-The most significant advantages for me were the work hours flexibility and the dedicated AWS sandbox environments provided for practice. The opportunity to attend advanced lectures and receive personal feedback from senior engineers is a priceless benefit.
+The greatest privilege I received was the flexibility and autonomy over my time, along with an AWS account provided for unlimited practice. Furthermore, the opportunity to participate in advanced classes and receive direct feedback from experts is of immense value, contributing directly to my personal capability development.
 
-### Additional Questions
+### Additional Questions (In-depth Survey)
 
-*   **What did you find most satisfying during your internship?**  
-    The opportunity to personally build and launch a high-concurrency Flash Sale ticketing system on AWS instead of just reading about cloud concepts. The unwavering dedication and support from the project admins are also something I hold in high regard.
-*   **What do you think the company should improve for future interns?**  
-    Creating a comprehensive guidebook for standardized cloud architecture diagramming at the beginning of the internship would be highly beneficial. This would help new cohorts quickly adapt and draw technical blueprints according to industry standards.
-*   **If recommending to a friend, would you suggest they intern here? Why or why not?**  
-    Undoubtedly. This program is not just a standard internship but a launchpad for accelerated learning, exposing students to real-world deployment pressures and inspiring continuous self-improvement for their future careers.
+*   **Question 1: What changes or biggest breakthroughs do you see in yourself before and after participating in the FCAJ program?**  
+    *Answer:* My biggest change lies in my problem-solving mindset. Previously at university, I usually approached technology from a theoretical and small-scale perspective. After completing the Flash Sale project on AWS, I now know how to think in terms of large-scale systems, focusing on load capacity, high availability, and optimizing cloud resources in a practical way.
+*   **Question 2: If you could go back to the first day of your internship, what would you prepare or do differently to take better advantage of the program's resources?**  
+    *Answer:* I would proactively ask for standardized guidelines on cloud architecture diagramming from the very first week, or suggest that the team compile a small guidebook to standardize this part. This would save me and future students a lot of initial troubleshooting time to focus more on infrastructure optimization in the later stages.
+*   **Question 3: Share one of the most pressured moments or lessons in the project that helped you practice your "overcoming difficulties" spirit?**  
+    *Answer:* That would be the final sprint when the ticketing system encountered congestion and had not yet optimized the processing flow for large-scale data. The pressure of time and the complexity of the problem at that time was huge. However, thanks to the timely, open guidance from the Admin team and the active discussion and mutual support of fellow interns, I found a solution and overcame this challenge.
