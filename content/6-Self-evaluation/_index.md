@@ -5,30 +5,35 @@ weight: 6
 chapter: false
 pre: " <b> 6. </b> "
 ---
-My internship at **Amazon Web Services Viet Nam Company Limited** from **April 20, 2026** to **July 10, 2026** has been an invaluable journey, allowing me to bridge the gap between academic theory and industry practice.
-As an active participant in the **Workforce Bootcamp - First Cloud AI Journey and through hands-on development of the Flash Sale ticketing system**, I succeeded in sharpening my capabilities in **Cloud architecture design, AWS service provisioning, Node.js development, and collaborative teamwork**.
+### 1. Overview of Internship Evaluation
 
-Throughout this period, I maintained a professional work ethic, adhered strictly to company policies, and proactively collaborated with team members to deliver quality results.
+Having accompanied Amazon Web Services Vietnam for over 2 months, I had a valuable opportunity to convert my foundational university knowledge into hands-on capabilities within a large-scale corporate environment. Direct participation in building the Flash Sale Ticketing System helped me achieve major professional progress:
 
-Following is an objective self-assessment of my performance and development during this internship:
+*   **Technical Capability:** Enhanced cloud architecture design thinking and optimized service deployments on AWS infrastructure.
+*   **Programming Skills:** Improved logical thinking and software development skills in Node.js by solving high-concurrency data access challenges.
+*   **Professional Conduct:** Cultivated effective teamwork skills, built a strong sense of responsibility, strictly complied with internal regulations, and always proactively collaborated with colleagues toward the overall project goals.
 
-| No. | Criteria                            | Description                                                                                      | Good | Fair | Average |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------ | ---- | ---- | ------- |
-| 1   | **Professional knowledge & skills** | Understanding of the field, applying knowledge in practice, proficiency with tools, work quality | ✅    | ☐    | ☐       |
-| 2   | **Ability to learn**                | Ability to absorb new knowledge and learn quickly                                                | ✅    | ☐    | ☐       |
-| 3   | **Proactiveness**                   | Taking initiative, seeking out tasks without waiting for instructions                            | ✅    | ☐    | ☐       |
-| 4   | **Sense of responsibility**         | Completing tasks on time and ensuring quality                                                    | ✅    | ☐    | ☐       |
-| 5   | **Discipline**                      | Adhering to schedules, rules, and work processes                                                 | ✅    | ☐    | ☐       |
-| 6   | **Progressive mindset**             | Willingness to receive feedback and improve oneself                                              | ✅    | ☐    | ☐       |
-| 7   | **Communication**                   | Presenting ideas and reporting work clearly                                                      | ☐    | ✅    | ☐       |
-| 8   | **Teamwork**                        | Working effectively with colleagues and participating in teams                                   | ✅    | ☐    | ☐       |
-| 9   | **Professional conduct**            | Respecting colleagues, partners, and the work environment                                        | ✅    | ☐    | ☐       |
-| 10  | **Problem-solving skills**          | Identifying problems, proposing solutions, and showing creativity                                | ☐    | ✅    | ☐       |
-| 11  | **Contribution to project/team**    | Work effectiveness, innovative ideas, recognition from the team                                  | ✅    | ☐    | ☐       |
-| 12  | **Overall**                         | General evaluation of the entire internship period                                               | ✅    | ☐    | ☐       |
+### 2. Self-Evaluation Table of Training Results
 
-### Areas for Growth
+| No. | Evaluation Criteria | Detailed Description | Good | Fair | Average |
+|---|---|---|---|---|---|
+| 1 | Professional Knowledge & Skills | Understanding of the industry, applying knowledge to practice, mastering tools, and ensuring work quality. | ✓ | | |
+| 2 | Ability to Learn | Learning speed for new knowledge, responsiveness to technology. | ✓ | | |
+| 3 | Proactiveness | Self-motivated problem exploration, readiness to take on tasks without detailed instructions. | ✓ | | |
+| 4 | Sense of Responsibility | Commitment to complete work on schedule and meet quality standards. | ✓ | | |
+| 5 | Discipline | Strict adherence to schedules, corporate regulations, and workflows. | ✓ | | |
+| 6 | Progressive Mindset | Proactively receiving constructive feedback and striving for self-improvement. | ✓ | | |
+| 7 | Communication Skills | Presenting ideas coherently, reporting work progress clearly. | | ✓ | |
+| 8 | Teamwork Ability | Coordinating smoothly with colleagues, actively contributing to collective activities. | ✓ | | |
+| 9 | Professional Conduct | Respecting colleagues, partners, and adapting well to corporate culture. | ✓ | | |
+| 10 | Problem-Solving Thinking | Quickly identifying errors/incidents, proposing flexible and creative solutions. | | ✓ | |
+| 11 | Contribution to Project | Bringing practical efficiency, contributing improvement initiatives, and getting recognized by the team. | ✓ | | |
+| 12 | Overall Evaluation | Objective assessment of the entire internship path and results. | ✓ | | |
 
-* Gain more hands-on troubleshooting experience in handling live runtime incidents on Cloud systems.
-* Explore further into cost-optimization frameworks and advanced AWS security practices.
-* Strengthen technical English reading comprehension to read documents and acquire new technological updates more efficiently.
+### 3. Directions for Improvement and Self-Development
+
+Despite having achieved certain results, I recognize that I need to continue refining the following aspects to better meet the requirements of a professional Cloud engineer:
+
+*   **Enhancing Incident Troubleshooting Capability:** Accumulating more hands-on experience in monitoring, early detection, and troubleshooting of cloud infrastructure incidents.
+*   **Expanding Specialized Knowledge:** Continuing deep research into advanced security solutions (Cloud Security) and operational cost optimization strategies (FinOps) on the AWS platform.
+*   **Developing Language Skills:** Improving English technical reading comprehension to proactively stay updated on new technologies, services, and AWS technical whitepapers.

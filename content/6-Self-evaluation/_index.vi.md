@@ -6,31 +6,35 @@ chapter: false
 pre: " <b> 6. </b> "
 ---
 
-Trải qua hơn 2 tháng thực tập tại **Công ty TNHH Amazon Web Services Việt Nam** (từ **20/04/2026** đến **10/07/2026**), tôi đã tích lũy được nhiều trải nghiệm quý giá khi áp dụng những kiến thức học ở giảng đường vào các bài toán thực tế.
-Với vai trò là học viên tham gia **chương trình Workforce Bootcamp - First Cloud AI Journey và trực tiếp tham gia xây dựng hệ thống đặt vé Flash Sale**, tôi đã nâng cao đáng kể năng lực **thiết kế kiến trúc đám mây Cloud, triển khai các dịch vụ trên hạ tầng AWS, cải thiện kỹ năng lập trình Node.js cũng như rèn luyện khả năng phối hợp làm việc nhóm**.
+### 1. Đánh giá tổng quan quá trình thực tập
 
-Trong công việc, tôi luôn đề cao ý thức trách nhiệm, chấp hành tốt các quy định nội bộ và chủ động phối hợp với đồng nghiệp để cùng hoàn thành các mục tiêu chung.
+Qua hơn 2 tháng đồng hành cùng Amazon Web Services Việt Nam, tôi đã có cơ hội quý giá để chuyển hóa những kiến thức nền tảng tại giảng đường thành năng lực thực chiến trong môi trường doanh nghiệp quy mô lớn. Việc tham gia trực tiếp vào dự án xây dựng Hệ thống đặt vé Flash Sale đã giúp tôi đạt được những bước tiến lớn về mặt chuyên môn:
 
-Dưới đây là bảng tự nhận xét khách quan của bản thân sau thời gian rèn luyện tại doanh nghiệp:
+*   **Năng lực kỹ thuật:** Nâng cao tư duy thiết kế kiến trúc đám mây và tối ưu hóa việc triển khai các dịch vụ trên hạ tầng AWS.
+*   **Kỹ năng lập trình:** Cải thiện tư duy logic và kỹ năng phát triển phần mềm với Node.js thông qua các bài toán xử lý lượng lớn dữ liệu truy cập đồng thời.
+*   **Tác phong làm việc:** Rèn luyện khả năng làm việc nhóm hiệu quả, xây dựng ý thức trách nhiệm cao, nghiêm túc chấp hành mọi quy định nội bộ và luôn chủ động phối hợp cùng đồng nghiệp để hướng tới mục tiêu chung của dự án.
 
+### 2. Bảng tự đánh giá kết quả rèn luyện
 
-| STT | Tiêu chí                            | Mô tả                                                                                            | Tốt | Khá | Trung bình |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------ | --- | --- | ---------- |
-| 1   | **Kiến thức và kỹ năng chuyên môn** | Hiểu biết về ngành, áp dụng kiến thức vào thực tế, kỹ năng sử dụng công cụ, chất lượng công việc | ✅   | ☐   | ☐          |
-| 2   | **Khả năng học hỏi**                | Tiếp thu kiến thức mới, học hỏi nhanh                                                            | ✅   | ☐   | ☐          |
-| 3   | **Chủ động**                        | Tự tìm hiểu, nhận nhiệm vụ mà không chờ chỉ dẫn                                                  | ✅   | ☐   | ☐          |
-| 4   | **Tinh thần trách nhiệm**           | Hoàn thành công việc đúng hạn, đảm bảo chất lượng                                                | ✅   | ☐   | ☐          |
-| 5   | **Kỷ luật**                         | Tuân thủ giờ giấc, nội quy, quy trình làm việc                                                   | ✅   | ☐   | ☐          |
-| 6   | **Tính cầu tiến**                   | Sẵn sàng nhận feedback và cải thiện bản thân                                                     | ✅   | ☐   | ☐          |
-| 7   | **Giao tiếp**                       | Trình bày ý tưởng, báo cáo công việc rõ ràng                                                     | ☐   | ✅   | ☐          |
-| 8   | **Hợp tác nhóm**                    | Làm việc hiệu quả với đồng nghiệp, tham gia nhóm                                                 | ✅   | ☐   | ☐          |
-| 9   | **Ứng xử chuyên nghiệp**            | Tôn trọng đồng nghiệp, đối tác, môi trường làm việc                                              | ✅   | ☐   | ☐          |
-| 10  | **Tư duy giải quyết vấn đề**        | Nhận diện vấn đề, đề xuất giải pháp, sáng tạo                                                    | ☐   | ✅   | ☐          |
-| 11  | **Đóng góp vào dự án/tổ chức**      | Hiệu quả công việc, sáng kiến cải tiến, ghi nhận từ team                                         | ✅   | ☐   | ☐          |
-| 12  | **Tổng thể**                        | Đánh giá chung về toàn bộ quá trình thực tập                                                     | ✅   | ☐   | ☐          |
+| STT | Tiêu chí đánh giá | Mô tả chi tiết | Tốt | Khá | Trung bình |
+|---|---|---|---|---|---|
+| 1 | Kiến thức & kỹ năng chuyên môn | Hiểu biết về ngành, áp dụng kiến thức vào thực tế, làm chủ công cụ và đảm bảo chất lượng công việc. | ✓ | | |
+| 2 | Khả năng học hỏi | Tốc độ tiếp thu kiến thức mới, nhạy bén với công nghệ. | ✓ | | |
+| 3 | Tính chủ động | Tự giác tìm hiểu vấn đề, sẵn sàng nhận nhiệm vụ mà không cần chỉ dẫn chi tiết. | ✓ | | |
+| 4 | Tinh thần trách nhiệm | Cam kết hoàn thành công việc đúng tiến độ và đạt chuẩn chất lượng. | ✓ | | |
+| 5 | Tính kỷ luật | Tuân thủ nghiêm túc giờ giấc, nội quy doanh nghiệp và quy trình làm việc. | ✓ | | |
+| 6 | Tính cầu tiến | Chủ động đón nhận phản hồi (feedback) mang tính xây dựng và nỗ lực hoàn thiện bản thân. | ✓ | | |
+| 7 | Kỹ năng giao tiếp | Trình bày ý tưởng mạch lạc, báo cáo tiến độ công việc rõ ràng. | | ✓ | |
+| 8 | Khả năng hợp tác nhóm | Phối hợp nhịp nhàng với đồng nghiệp, đóng góp tích cực vào hoạt động chung. | ✓ | | |
+| 9 | Ứng xử chuyên nghiệp | Tôn trọng đồng nghiệp, đối tác và thích nghi tốt với văn hóa doanh nghiệp. | ✓ | | |
+| 10 | Tư duy giải quyết vấn đề | Nhận diện lỗi/sự cố nhanh chóng, đề xuất giải pháp xử lý linh hoạt và sáng tạo. | | ✓ | |
+| 11 | Đóng góp cho dự án | Mang lại hiệu quả thực tế, đóng góp sáng kiến cải tiến và được đội ngũ ghi nhận. | ✓ | | |
+| 12 | Đánh giá tổng thể | Nhận định khách quan về toàn bộ lộ trình và kết quả thực tập. | ✓ | | |
 
-### Cần cải thiện
+### 3. Định hướng cải thiện và phát triển bản thân
 
-* Tích lũy thêm kinh nghiệm thực chiến trong việc phát hiện và khắc phục các sự cố hạ tầng Cloud.
-* Tiếp tục nghiên cứu sâu hơn về các giải pháp bảo mật nâng cao và các chiến lược tối ưu hóa chi phí (FinOps) trên nền tảng AWS.
-* Trau dồi thêm năng lực đọc hiểu tài liệu kỹ thuật bằng tiếng Anh để cập nhật các công nghệ mới một cách chủ động.
+Dù đã đạt được những kết quả nhất định, tôi nhận thấy bản thân cần tiếp tục trau dồi các khía cạnh sau để đáp ứng tốt hơn yêu cầu của một kỹ sư Cloud chuyên nghiệp:
+
+*   **Nâng cao năng lực xử lý sự cố:** Tích lũy thêm kinh nghiệm thực tế trong việc giám sát, phát hiện sớm và khắc phục (troubleshooting) các sự cố trên hạ tầng Cloud.
+*   **Mở rộng kiến thức chuyên sâu:** Tiếp tục nghiên cứu sâu về các giải pháp bảo mật nâng cao (Cloud Security) và các chiến lược tối ưu hóa chi phí vận hành (FinOps) trên nền tảng AWS.
+*   **Phát triển kỹ năng ngoại ngữ:** Nâng cao năng lực đọc hiểu tài liệu kỹ thuật bằng tiếng Anh để chủ động cập nhật các công nghệ, dịch vụ mới và các bộ quy chuẩn kỹ thuật (Whitepapers) của AWS.
